@@ -1,6 +1,18 @@
 #CLASE RUBY
 23-Sep-16
 
+Creado por Yakihiro Matsumoto, tambien conocido como Matz.
+
+####VENTAJAS:
+
+- Sintaxis Simple
+- Programacion orientada a ojbetos (classes, methods, objects)
+- Caracteristicas especiales para la orientacion de objetos (Metodos single methods, Mix-ins, etc)
+- Permite sobrecarga de operadores
+- Manejo d eerrores, iteradore.
+
+RUBY, es un lenguaje interpretado que inicialmente no o puede ejecutarel navegador.
+
 
 VENTAJAS: Interpretado, ningun navegador es capaz de interpretarlo, de hecho se necesita un programa que tambien se llama RUBY, el cual permite que el navegador pueda interpretar el codigo. Quiere decir que no se compila.
 
