@@ -1,0 +1,103 @@
+#CLASE RUBY
+23-Sep-16
+
+
+VENTAJAS: Interpretado, ningun navegador es capaz de interpretarlo, de hecho se necesita un programa que tambien se llama RUBY, el cual permite que el navegador pueda interpretar el codigo. Quiere decir que no se compila.
+
+Sintaxis sencilla y elegante.
+
+Permite tambien metaprogramming, es decir que permite que el codigo pueda ser modificado en plena ejecucion.
+
+El interprete es una pantalla negra parecida a un terminal. Se entra con el comando "irb", lo primero que deberiamos ver es la version. (IDEAL 2.3.1)
+
+Desde el primer momento en que estamos en ruby, ya no estamos en el terminal, es decir que si queremos ejecutar algun programa de la terminal nos lanzara error.
+
+Si queremos ver la version de ruby podemos usar"ruby-v"
+
+
+LOS SCRIPTS
+
+Se pueden crear distintuos archivos .rb, que se puede correr con ruby.
+
+Tambien desde sublime, podemos marcar la opcion Build System -> Ruby, y podemos ejecutar el programa desde ahi.
+
+
+
+Ruby es casesensitive y ademas reconoce caracteres especiales.
+
+gets funciona como un imput, pero el problema es que gets captura el enter.
+
+a = gets
+
+introducimos el valor de la variable.
+
+y al final a tiene el valor introducido mas el /n salto de linea.
+
+con el gets.chomp podemos eliminar este salto de linea.
+
+TIpos de datos:
+Son basicamente los mismos datos que hemos conocido
+
+
+Los objetos tienen muchos metodos asociados.
+
+
+
+Ejercicio ingresa numbre y edad y devuelve concatenado
+
+puts "Ingrese su nombre"
+a=gets.chomp
+puts "Ingrese su edad"
+b = gets.chomp
+
+puts "Nombre:" + a + " Edad: " + b
+
+
+Para interpolar las comilas podemos usar
+
+puts "Nombr: #{a} y edad: #{b}"
+
+
+
+Si se desean convertir datos de string a numeros, se utiliza .to_i , si lo queremos convertir a string .to_s, to_f
+
+
+Es importante enteder que 1 no es true, y que 0 no es false.
+
+
+##ARREGLOS
+
+Son muy parecidos a JavaScript, 
+
+
+##SIMBOLOS
+
+Empiezan con dos puntos, son inmutables, son mas rapidos y utiles en el sentido que no ocupan mucha memoria.
+
+##HASH
+
+Sirven para guardas cosas con definicion
+
+##TIME
+
+Con Time.now se puede obtener la hora.
+
+
+## IF & UNLESS
+
+ejemplo:
+
+if a==2
+	puts "a vale 2"
+end
+
+
+##CASE
+
+Se utiliza cuando son muchos los posibles casos, funciona como un if mas completo, y flexible, ya que puedes hacer distintos tipos de operaciones.
+
+##CICLOS
+
+## x.times
+
+Nos permite hacer iteraciones por las cantidad de veces especificada.
