@@ -101,3 +101,7 @@ Se utiliza cuando son muchos los posibles casos, funciona como un if mas complet
 ## x.times
 
 Nos permite hacer iteraciones por las cantidad de veces especificada.
+
+
+##FUCNIONES
+No existen funciones en ruby, lo que existen son los metoros. Y la ultima linea de un metodo, es implicitamente tomada como retorno
