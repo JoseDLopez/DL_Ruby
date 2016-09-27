@@ -12,4 +12,12 @@ require 'pp'
 numero = [1,2,3,0,1,2,2,1,2,1,2,0,3]
 color = [:azul, :verde,:amarillo]
 
+numero.each_with_index do |value,index|
+	if value < color.length
+		numero[index]=color[value]
+	else
+		numero[index]=nil
+	end
+end
+pp numero
 
