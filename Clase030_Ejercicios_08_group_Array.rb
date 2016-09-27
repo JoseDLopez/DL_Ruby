@@ -4,5 +4,6 @@
 require 'pp'
 
 arreglo_par = [1,2,3,4,5,6,7,8,9,10]
-arreglo_agrupado = arreglo_par.each_slice(2)
+arreglo_agrupado = arreglo_par.each_slice(2).to_a
 pp arreglo_par
+pp arreglo_agrupado
