@@ -1,0 +1,118 @@
+CLASE 29
+23-Sep-16
+
+#ARREGLOS
+
+Los Arrays de ruby son contenedores que permiten agregar múltiples datos que pueden ser de diversos tipos.
+
+Ejemplo:
+
+	a = [1,2,3,4,5,"hola"]
+	puts a[0]
+
+Los índices van desde cero hasta n-1. Acceder a un índice mas allá del rango tendrá como efecto la devolución de NIL.
+
+Se crean con [], es la forma mas comun de crearlos.
+
+Los elementos del array son accesibles por el indice. ejemplo: puts a[0], nos devuelve el elemento ubicado en la posicion 0.
+
+Con el indice negativo, es como si se accediera desde el ultimo hacia el primero.
+
+Los arreglos se pueden recorrer con un for, y tambien con un .each. Este .each tiene forma normal y forma express.
+
+Ejemplo:
+
+	a.each do |i|
+		puts a[i]
+	end
+
+
+
+En los arrelgos push agrega un dato al final del arreglo.
+En los arrelgos pop obtiene y elimina ekl ultimo elemento de un arreglo.
+
+Al igual que javascript los arreglos son mutables, es decir si nosotros asignamos un arreglo a otra varialbe, lo que estamos haciendo es referenciarlos.
+
+Con el dup, podemos copiar cualquier arreglo, siendo entonces una copia y no una referencia.
+
+Ejemplo: 
+
+"b = a.dup"
+
+Con "sort" se devuelve una copia ordenada, por otro lado con "sort!" se ordena el arreglo, pero tambien se afecta el arreglo original.
+
+LOs string no son iterables, pero si son accesibles.
+
+Existen metodos que nos permiten jugarn con los string y llevaros a arreglo.
+
+
+Existen varios metoods que permiten hacer de forma colectiva o global.
+
+map permite hacer un conjunto de procesos con cada arreglo. ESTE DEVUELVE UN ARRELGO NUEVO
+
+select, permite seleccionar los datos que cumplen cierto criterio.
+
+inject, permite aplicar una operacion en la que es posible ir guardando el resultado.
+
+each se usa cuando necesitas operar entre las cosas .
+
+Cuando necesitas que el resultado venga en arreglo, y quieres hacer lo mismo para cada elemento, utilizas map.
+
+Select se ocupa cuando se quiere filtrar los resultados.
+
+Inject cuando se necesit agrupar valores en uno solo.
+
+group_by es para agrupar, y la idea de esto es agrupar en un critero.
+
+
+#SIMBOLOS
+
+Los símbolos son tipos de datos similares a los string pero están optimizados para ocupar menos memoria. Los simbolos empiezancon ":".
+
+Ejemplo:
+
+	a= :hola
+	puts a
+
+Son usados en ocasiones donde no nos interesa usar el string para operar sobre el,  se ocupa para denotar el estado de una variable. Es decir, son valores considerados como constantes y no deberian mutar.
+
+Ejemplo:
+
+	estados_semaforo = [:verde, :amarillo, :rojo]
+	semaforo1 = estado_semaforo[0]
+
+
+
+#HASH DICCIONARIOS
+
+Permiten almacenar los datos bajo otra estructura, donde hay indice que conoceremos como "clave"
+
+Se puede crear como 
+
+	a = {a:5, b:'hola'}
+
+Las claves se pueden guardar como string o como simbolos, no usar numeros para las llaves.
+
+Ejemplo:
+
+	a= {:simbolo1 => "valor1", :simbolo2 => "valor2"}
+
+ó puede ser creado de la siguiente manera:
+
+	a = {"clave1": "valor1", "clave2": "valor2"}
+
+
+De las dos maneras se convertiran en símbolos.
+
+
+
+
+Si queremos eliminar un elemento podemos usar "a.delete(:javier)"
+
+y fue elminiado del hash.
+
+Los Hash al igual que los array, se referencian, mas no se copian.
+
+
+Select
+Sirve para seleccionar algo de los hash, se le pasan los dos parametros, key y value
