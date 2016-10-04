@@ -1,9 +1,28 @@
 #CLASE RUBY
 23-Sep-16
 
-Creado por Yakihiro Matsumoto, tambien conocido como Matz.
+Creado por Yakihiro Matsumoto, también conocido como Matz.
 
-####VENTAJAS:
+Para ingresar al intérprete se debe ejecutar en la consola el comando:
+	
+	irb
+
+Y para salir se escribe:
+
+	exit
+
+Los scripts son archivos que se pueden guardar y correr desde la terminal, con el comando ruby:
+
+	ruby script.rb
+
+Es importante recalcar que en ruby todas las variasbles son **OBJETOS**, por lo tanto, todas tienen métodos asiciados, ejemplo:
+
+	2.class -> FIXNUM
+	"hola".class -> STRING
+	nil.class -> NilClass
+
+
+##VENTAJAS:
 
 - Sintaxis Simple
 - Programacion orientada a ojbetos (classes, methods, objects)
@@ -14,9 +33,7 @@ Creado por Yakihiro Matsumoto, tambien conocido como Matz.
 RUBY, es un lenguaje interpretado que inicialmente no o puede ejecutarel navegador.
 
 
-VENTAJAS: Interpretado, ningun navegador es capaz de interpretarlo, de hecho se necesita un programa que tambien se llama RUBY, el cual permite que el navegador pueda interpretar el codigo. Quiere decir que no se compila.
-
-Sintaxis sencilla y elegante.
+Ningun navegador es capaz de interpretarlo, de hecho se necesita un programa que tambien se llama RUBY, el cual permite que el navegador pueda interpretar el codigo. Quiere decir que no se compila.
 
 Permite tambien metaprogramming, es decir que permite que el codigo pueda ser modificado en plena ejecucion.
 
@@ -24,96 +41,264 @@ El interprete es una pantalla negra parecida a un terminal. Se entra con el coma
 
 Desde el primer momento en que estamos en ruby, ya no estamos en el terminal, es decir que si queremos ejecutar algun programa de la terminal nos lanzara error.
 
-Si queremos ver la version de ruby podemos usar"ruby-v"
+Si queremos ver la version de ruby podemos usar:
+
+	ruby-v
 
 
-LOS SCRIPTS
+##VARIABLES
 
-Se pueden crear distintuos archivos .rb, que se puede correr con ruby.
+Ruby es bastante dinámico al respecto:
 
-Tambien desde sublime, podemos marcar la opcion Build System -> Ruby, y podemos ejecutar el programa desde ahi.
+- Cualquier objeto puede ser asignado a una variable.
+- Las variables se distinguen por ser un identificacor válido.
+- Son aceptados los caracteres UTF-8.
+- Los identificadores son sensibles a las mayúsculas.
 
+Ejemplo:
 
+	a=5
+	año = 1997
+	canción = Hello
 
-Ruby es casesensitive y ademas reconoce caracteres especiales.
+##ENTRADA Y SALIDA DE DATOS
 
-gets funciona como un imput, pero el problema es que gets captura el enter.
+Para poder capturar los datos del teclado se utiliza **gets**, ejemplo:
 
-a = gets
+	a=gets
 
-introducimos el valor de la variable.
+El problema es que nos devuelve el dato introducido, pero con el salto de linea al presionar enter, es por ello que se hace uso del **.chomp**. Ejemplo:
 
-y al final a tiene el valor introducido mas el /n salto de linea.
+	variable_sin_salto = gets.chomp
 
-con el gets.chomp podemos eliminar este salto de linea.
+Si deseamos imprimir datos o mostrar se puede usar:
 
-TIpos de datos:
-Son basicamente los mismos datos que hemos conocido
+	puts a
+	print a
+	pp a
 
+Para que el pp pueda ser utilizado debemos especificar previamente en el documento:
 
-Los objetos tienen muchos metodos asociados.
+	require 'pp'
 
+###INTERPOLACION
 
+Es útil para casos donde resulta mas sencillo
+ que concatenar strings, para ello se usan las comillas dobles y se usa el simbolo del numerador. Ejemplo:
 
-Ejercicio ingresa numbre y edad y devuelve concatenado
-
-puts "Ingrese su nombre"
-a=gets.chomp
-puts "Ingrese su edad"
-b = gets.chomp
-
-puts "Nombre:" + a + " Edad: " + b
-
-
-Para interpolar las comilas podemos usar
-
-puts "Nombr: #{a} y edad: #{b}"
-
-
-
-Si se desean convertir datos de string a numeros, se utiliza .to_i , si lo queremos convertir a string .to_s, to_f
+ 	a = 5
+ 	puts "El valor de a es #{a}"
 
 
-Es importante enteder que 1 no es true, y que 0 no es false.
+Ejercicio ejemplo:
+
+Ingresa numbre y edad y devuelve concatenado
+
+	puts "Ingrese su nombre"
+	a=gets.chomp
+	puts "Ingrese su edad"
+	b = gets.chomp
+
+	puts "Nombre:" + a + " Edad: " + b
+	puts "Nombre: #{a} y edad: #{b}"
+
+
+###CONVERSION
+
+Convertir a número:
+
+	dato.to_i
+
+Convertir a string:
+
+	dato.to_s
+
+Convertir a flotante:
+
+	dato.to_f
 
 
 ##ARREGLOS
 
-Son muy parecidos a JavaScript, 
+Son contenedores que permiten agregar múltiples datos de diversos tipos. Se puede acceder a ellos a traves de su indice o secuencialmente. Los indices van desde 0 hasta n-1.
+
+Ejemplo:
+
+	a=[1,6,9,4,5,"hola"]
+	puts a[0]
+
+Es decir que a[0], mostrará 1.
 
 
 ##SIMBOLOS
 
-Empiezan con dos puntos, son inmutables, son mas rapidos y utiles en el sentido que no ocupan mucha memoria.
+Empiezan con dos puntos, son inmutables, son mas rapidos y utiles en el sentido que no ocupan mucha memoria. Un arreglo puede tener símbolos.
+
+Ejemplo:
+
+	a=:hola
+	puts a
+
+Esto imprimiría: :hola
+
+Otro ejemplo de un array con símbolos:
+
+	estados_semaforo = [:verde,:amarillo,:rojo]
+	semaforo1 = estados_semaforo[0]
+
+Esto asignará a **semaforo1** el valor de **:verde**
+
 
 ##HASH
 
-Sirven para guardas cosas con definicion
+Los hash son un tipo de contenedor que en lugar de indexarse por índice, se indexan por una clave. La sintaxis de los hash es **clave:valor**, donde la clave puede ser un string o símbolo y el valor puede ser cualquier objeto (inclusive otro hash).
 
-##TIME
+Ejemplo:
 
-Con Time.now se puede obtener la hora.
-
-
-## IF & UNLESS
-
-ejemplo:
-
-if a==2
-	puts "a vale 2"
-end
+	a={"clave1":"valor1","clave2":"valor2"}
 
 
-##CASE
+###TIME
+
+Es una clase que permite generar instanacias de tiempo. Si escribimos **Time.now" este nos devolverá una instancia con la hora local del sistema.
+
+Ejemplo:
+
+	hora = Time.now
+	puts hora + 60
+	puts hora  + 3600
+
+
+
+
+##CONDICIONALES
+
+####IF & UNLESS
+
+De anterioridad conocemos el condicional IF, en esta oportunidad es posible usarlo de dos maneras:
+
+Forma normal:
+
+	if a == 2
+		puts "a vale 2"
+	end
+
+	unless a == 2
+		puts "a es distinto de 2"
+	end
+
+
+Forma Express:
+
+	puts "a vale 2" if a== 2
+	puts "a es distinto de 2" unless a == 2
+
+####ELSIF / ELSE
+
+En este caso la sintaxis cambia, debemos ver con detenimiento el ejemplo:
+
+	puts "Ingresa un numero"
+	a = gets.chomp.to_i
+	if a > 10
+		puts "tienes más de 19 años"
+	elsif a >= 20
+		puts "tienes más de 20 años"
+	else
+		puts "eres menor de 10 años"
+	end
+
+
+####CASE
 
 Se utiliza cuando son muchos los posibles casos, funciona como un if mas completo, y flexible, ya que puedes hacer distintos tipos de operaciones.
 
+Ejemplo:
+
+	case a
+	when 1..10
+		puts "Estoy entre 1 y 10"
+	when 11
+		puts "Soy 11, o sea más que 10"
+	when String
+		puts "No soy un número, soy un string"
+	else
+		puts "no sabemos que hacer con este valor #{a}"
+	end
+
+
 ##CICLOS
 
-## x.times
+####x.times
 
-Nos permite hacer iteraciones por las cantidad de veces especificada.
+Nos permite hacer iteraciones por las cantidad de veces especificada. Al igual que los condicionales if, tiene dos maneras de escribirse:
+
+Forma Normal:
+
+	5.times do
+		puts "Repitiendo"
+	end
+
+Forma Express:
+
+	5.times {puts "Repitiendo"}
+
+También podemos conseguir la manera en que se cuente el índice, utilizando el pipe del método times. Ejemplo:
+
+Forma Normal:
+
+	5.times do |i|
+		puts "repitiendo: #{i}"
+	end
+
+Forma Express:
+
+	5.times {|i| puts "repitiendo #{i}"}
+
+
+####WHILE
+
+Permite repetir una instrucción mientras se cumpla una condición. Mientras la condición sea verdadera todo lo que esté dentro del bloque se repetirá
+
+Ejemplo:
+
+	var = 0
+	while var < 10
+		puts var
+		var += 1
+	end
+
+####FOR
+
+Es una instrucción que nos permite iterar sobre rangos y arreglos. Ejemplo:
+
+	for i in 0..10
+		puts i
+	end
 
 
 ##FUCNIONES
-No existen funciones en ruby, lo que existen son los metoros. Y la ultima linea de un metodo, es implicitamente tomada como retorno
+
+No existen funciones en ruby, lo que existen son los métodos. Y la última línea de un método, es implícitamente tomada como retorno.
+
+Ejemplo:
+
+	def metodo1
+		return "hola"
+	end
+
+	def metodo1
+		"hola"
+	end
+
+	def metodo3
+		"ho" + "la"
+	end
+
+	puts metodo1
+	puts metodo2
+	puts metodo3
+
+Las tres van a devolver **hola**.
+
+
+
