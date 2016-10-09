@@ -116,12 +116,42 @@ pp arreglo_de_hashes
 
 pp arreglo_de_hashes.count
 
-continentes = arreglo_de_hashes.collect {|x| x[:Continente]} ##EN ESTE punto el key pasa a ser un simbolo, por ello debe ser llamado con los dos puntos
-pp continentes
+puts "La cantidad de personas es: #{arreglo_de_hashes.count}"
 
-#Para eliminar los repetidos los podemos agrupar por nombre y contar
-continentes = continentes.group_by{|x| x}
-pp continentes
+puts "# 3.- Generar un array con cada continente, eliminar repeticiones,"
+
+pp arreglo_de_hashes.collect {|x| x[:Continente]}.uniq
+
+#Con el metodo .uniq logramos eliminar los repetidos.
+
+puts "# 4.- Armar un hash, donde cada Key sea un continente y el value un array con los países de cada continente "
+
+continentes_hash = Hash.new
+continentes_hash_r = Hash.new
+
+continentes_hash = arreglo_de_hashes.group_by {|ele| ele[:Continente]}
+
+continentes_hash.each {|llave,elemento| 
+	elemento[0][:Pais]}
+
+continentes_hash.each {|llave,elemento|
+	arreglo_por_pais = Array.new
+	elemento.each do |elemento|
+		arreglo_por_pais.push(elemento[:Pais])
+	end
+	continentes_hash_r[llave]=arreglo_por_pais
+}
+pp continentes_hash_r
 
 
+puts "# 5.- Generar una lista con todas las personas llamadas pedro "
 
+lista_pedro = arreglo_de_hashes.select {|elemento| elemento[:Nombre] == "Jose"}
+
+pp lista_pedro
+
+puts "# 6.- Hacer dos listas de personas, una por cada genero "
+
+lista_sexo = arreglo_de_hashes.group_by {|ele| ele[:Genero]}
+
+pp lista_sexo

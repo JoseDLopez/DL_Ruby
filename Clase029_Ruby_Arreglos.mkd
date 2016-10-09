@@ -12,24 +12,90 @@ Ejemplo:
 
 Los índices van desde cero hasta n-1. Acceder a un índice mas allá del rango tendrá como efecto la devolución de NIL.
 
-Se crean con [], es la forma mas comun de crearlos.
-
 Los elementos del array son accesibles por el indice. ejemplo: puts a[0], nos devuelve el elemento ubicado en la posicion 0.
 
 Con el indice negativo, es como si se accediera desde el ultimo hacia el primero.
 
+Se crean con [], es la forma mas comun de crearlos. Ejemplo:
+
+	a = [1,5,"9",4,"hola"]
+	a = []
+
+Creados con clase Array:
+
+	a = Array.new(3,0)
+	# => [0,0,0]
+
+	a = Array.new(4,"muuu")
+	# => ["muuu","muuu","muuu","muuu"]
+
+
+###ITERAR ARREGLOS
+
 Los arreglos se pueden recorrer con un for, y tambien con un .each. Este .each tiene forma normal y forma express.
+
+Ejemplo FOR:
+
+	array = [1,2,6,1,7,2,3]
+	for element in array do
+		puts element
+	end
+
+Ejemplo EACH:
+
+Normal:
+
+	array = [1,2,6,1,7,2,3]
+	array.each do |i|
+		puts i + 1
+	end
+
+Express:
+
+	array = [1,2,6,1,7,2,3]
+	array.each {|i| puts i + 1}
+
+
+###ITERAR ARRELGO CON ÍNDICE
+
+Se utiliza el método **each_with_index**
 
 Ejemplo:
 
-	a.each do |i|
-		puts a[i]
+	a = ["yo","soy","un","arreglo"]
+	a.each_with_index do |valor,indice|
+		puts "Este es el valor #{value}, y este es el índice #{indice}"
 	end
 
+###MÉTODOS DE LOS ARREGLOS
+
+Existe una gran variedad de métodos que podemos usar en los arreglos.
+
+Ejemplo:
+
+	array = [1,2,6,1,7,2,3]
+	suma = 0
+
+	array.each do |ele|
+		suma += ele
+	end
+
+	puts suma / array.count.to_f
+
+Este ejercicio devuelve el **promedio del arreglo**.
+
+#####PUSH & POP
+
+**.push** Agrega un dato al final de arreglo:
+
+	a.push(5)
+
+**.pop** Obtiene y elimina el últmo elemento del arreglo:
+
+	a.pop
 
 
-En los arrelgos push agrega un dato al final del arreglo.
-En los arrelgos pop obtiene y elimina ekl ultimo elemento de un arreglo.
+#####MUTABILIDAD
 
 Al igual que javascript los arreglos son mutables, es decir si nosotros asignamos un arreglo a otra varialbe, lo que estamos haciendo es referenciarlos.
 
@@ -37,32 +103,193 @@ Con el dup, podemos copiar cualquier arreglo, siendo entonces una copia y no una
 
 Ejemplo: 
 
-"b = a.dup"
+	b = a.dup
 
-Con "sort" se devuelve una copia ordenada, por otro lado con "sort!" se ordena el arreglo, pero tambien se afecta el arreglo original.
+#####ORDEN DE ARREGLOS
 
-LOs string no son iterables, pero si son accesibles.
+**.sort** Ordena un nuevo arreglo
 
-Existen metodos que nos permiten jugarn con los string y llevaros a arreglo.
+	b = a.sort
+
+**.sort!** Ordena el mismo arreglo.
+
+	b = a.sort
+	b.object_id == a.object_id
+	# => true
+
+###STRINGS
+
+Los string no son iterables, pero si son accesibles.
+
+Con el método **.split**, podemos entregar un criterio como parametro, con el cúal el método separa los elementos de la cadena de cáracteres:
+
+	"hola".split("")
+	# => ["h","o","l","a"]
 
 
-Existen varios metoods que permiten hacer de forma colectiva o global.
+####WORD ARRAY
 
-map permite hacer un conjunto de procesos con cada arreglo. ESTE DEVUELVE UN ARRELGO NUEVO
+Si usamos **%w()**, nos permitira hacer un arreglo a partir de un string. ejemplo:
 
-select, permite seleccionar los datos que cumplen cierto criterio.
+	array = %w(lorem ipsum)
+	#=> ["lorem", "ipsum"]
 
-inject, permite aplicar una operacion en la que es posible ir guardando el resultado.
 
-each se usa cuando necesitas operar entre las cosas .
 
-Cuando necesitas que el resultado venga en arreglo, y quieres hacer lo mismo para cada elemento, utilizas map.
+###OPERACIONES SOBRE LOS ARREGLOS
 
-Select se ocupa cuando se quiere filtrar los resultados.
+####MAP & COLLECT
 
-Inject cuando se necesit agrupar valores en uno solo.
+Estos devuelven un **array nuevo** que es resultado de la operación que se aplica al bloque entero. Collect y MAP hacen lo mismo.
 
-group_by es para agrupar, y la idea de esto es agrupar en un critero.
+Normal:
+
+	a= [1,2,3,4,5,6,7]
+	b = a.map do |e|
+		e*2
+	end
+
+	#=> b = [2,4,6,8,10,12,14]
+
+Express:
+
+	a= [1,2,3,4,5,6,7]
+	b = a.map{|e| e*2}
+
+	#=> b = [2,4,6,8,10,12,14]
+
+####SELECT & REJECT
+
+Select devuelve un array con todos los elementos que cunmplen con la condicion, Reject devuelve un array con los elementos que no la cumplen.
+
+En SELECT hariamos lo siguiente:
+
+	a=[1,2,3,4,5,6,7]
+	#Seleccionamos todos los pares
+	b = a.select{|x| x%2==0}
+	#=> [2,5,6]
+
+Para REJECT hariamos:
+
+	b = a.reject{|x| x%2==0}
+	#=> [1,3,5,7]
+
+
+####INJECT
+
+Permite aplicar una operacion en la que es posible ir guandando el resultado. Ideal para sacar promedios.
+
+Ejemplo:
+
+	suma= a.inject(0){|valor,acum| acum+=valor}
+	puts "Mostramos la suma de todos los elementos con inject: #{suma}"
+
+####GROUP_BY
+
+Nos permite agrupar por criterios.
+
+Ejemplos:
+Agrupar por tipo de dato
+
+	a.group_by {|ele| ele.class}
+
+Agrupar por elemento
+
+	a.group_by {|ele| ele}
+
+Agrupar por condicion
+
+	a.group_by {|ele| ele.even?}
+
+
+En resumen diriamos que:
+
+- **EACH** Se usa cuando se desea realizar operaciones por cada uno de los elementos.
+- **MAP/COLLECT** Cuando deseamos realizar la misma operacion a todos los elementos y necesitamos un arreglo nuevo.
+- **SELECT/REJECT** Cuando deseamos discriminar los datos y queremos un arreglo nuevo.
+- **INJECT** Cuando queremos recorrer y acumular valores.
+- **GROUP_BY** Cuando queremos agrupar por varios criterios.
+
+
+Es posible que existan arreglos dentros de otros arreglos, y con **.flatten** es posible aplanar un arreglo multidmiensional y llevarlo a normal.
+
+	super_array = [[1,2,3],[4,5,6],[7,8,9]]
+	super_array.flatten
+	#=> [1,2,3,4,5,6,7,8,9]
+
+
+#HASH DICCIONARIOS
+
+Permiten almacenar los datos bajo otra estructura, donde hay indice que conoceremos como "clave"
+
+Se puede crear como 
+
+	a = {a:5, b:'hola'}
+
+O de la siguiente manera:
+
+	a = Hash.new
+
+
+Las claves se pueden guardar como string o como simbolos, no usar numeros para las llaves. **Las claves deben ser únicas**.
+
+Ejemplo:
+
+	a= {:simbolo1 => "valor1", :simbolo2 => "valor2"}
+
+o puede ser creado de la siguiente manera:
+
+	a = {"clave1": "valor1", "clave2": "valor2"}
+
+
+De las dos maneras se convertiran en símbolos.
+
+Si se desea acceder a un hash se hace a traves de la clave:
+
+	puts hash[:a] #5
+
+
+
+Si queremos eliminar un elemento podemos usar 
+	
+	a.delete(:javier)
+
+y fue elminiado del hash.
+
+Los Hash al igual que los array, se referencian, mas no se copian.
+
+Para iterar un hash usamos **.each** de donde obtendremos llave y valor.
+
+Ejemplo:
+
+	edades = {"Oscar": 27, "Javier": 31, "Francisca": 32, "Alejandro": 19}
+	edades.each {|key, value| puts key}
+	edades.each {|key, value| puts value}
+	edades.each {|key, value| puts "#{key} tiene #{value} años"}
+
+Si deseamos agregar un nuevo elemento al HASH, basta con:
+
+	hash["nuevo"] = "valor"
+	hash[:otro_nuevo] = "Valors"
+
+
+Para conocer todos los **KEYS** de un hash, basta con ejecutar:
+
+	hash.keys
+
+Y si quisieran todos los valores sería:
+
+	hash.values
+
+Con **SELECT** posdemos filtrar datos de un HASH, donde debemos indicar la condicion. Ejemplo:
+
+	hash.select{|k,v| condicion}
+
+	h = {"a" => 100, "b" => 200, "c" => 300}
+
+	h.select {|k,v| k>"a"} #Nos devolverá un arreglo con b y c
+	h.select {|k,v| v < 200} #Nos devolvera el arreglo solo con a
+
 
 
 #SIMBOLOS
@@ -80,39 +307,3 @@ Ejemplo:
 
 	estados_semaforo = [:verde, :amarillo, :rojo]
 	semaforo1 = estado_semaforo[0]
-
-
-
-#HASH DICCIONARIOS
-
-Permiten almacenar los datos bajo otra estructura, donde hay indice que conoceremos como "clave"
-
-Se puede crear como 
-
-	a = {a:5, b:'hola'}
-
-Las claves se pueden guardar como string o como simbolos, no usar numeros para las llaves.
-
-Ejemplo:
-
-	a= {:simbolo1 => "valor1", :simbolo2 => "valor2"}
-
-ó puede ser creado de la siguiente manera:
-
-	a = {"clave1": "valor1", "clave2": "valor2"}
-
-
-De las dos maneras se convertiran en símbolos.
-
-
-
-
-Si queremos eliminar un elemento podemos usar "a.delete(:javier)"
-
-y fue elminiado del hash.
-
-Los Hash al igual que los array, se referencian, mas no se copian.
-
-
-Select
-Sirve para seleccionar algo de los hash, se le pasan los dos parametros, key y value

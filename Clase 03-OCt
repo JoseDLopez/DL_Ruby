@@ -1,0 +1,33 @@
+Clase 03-OCt
+
+Asset Path
+
+
+Asset Pipe
+
+HAremos un ejercicio donde crearemos un nuevo proyecto y haremos uso del asset.
+
+1) Creamos el proyecto con:
+
+	rails new nombre_proyecto
+
+
+2) Arrancamos el servidor.
+
+	rails s
+
+3) Creamos el controler con la pagina 1
+
+	
+
+4) Crear dos archivos CSS que modifiquen el color de background de la pagina.
+
+Se crean en app assets stylesheet
+
+
+
+Si queremos integrar bootsrap a nuestro proyecto vamos a bootstrap buscamos el cdn y lo agregamos en layouts application .html
+
+Recordar que la parte de css se debe colocar de primero y la parte de javascript se debe colocar de ultimo.
+
+Si creamos stylesheets debemos colocarlo en app assets stylesheets.

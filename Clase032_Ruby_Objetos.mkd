@@ -1,0 +1,33 @@
+##Clase 32
+#RUBY ORIENTADO A OBJETOS
+
+En ruby, todo es un objeto, los numeros son objetos del tipo **Fixnum**, y existen objetos de diversos tipos, como por ejemplo: String, Array, True, False.
+
+Los objetos nos permiten crear nuestros propios tipos de datos y nuestras propias operaciones para resolver los problemas que necesitamos, ademas nos permiten reutilizar el código que hagamos para resolver problemas similares.
+
+###CLASES
+
+Las **CLASES** son **recetas**, o el esqueleto, son un molde o una fábrica que sirve para construir esos objetos, por ejemplo un molde de una pieza de lego. Mientras que los objetos son el producto de este molde, es decir, los legos.
+
+El proceso de creacion de un objeto a traves de una clase, se llama **INSTANCIAR**.
+
+El proceso completo seria:
+
+	CLASE -> INSTANCIAR -> OBJETO
+
+
+####Definir una Clase
+
+En Ruby, para definir una clase se hace de la siguiente manera:
+
+	class MoldeLego
+	end
+
+####Crear objeto a partir de clase
+
+Cuando queremos crer el objeto a partir de la clase, lo instanciamos, y sería:
+
+	lego1 = MoldeLego.new
+
+
+

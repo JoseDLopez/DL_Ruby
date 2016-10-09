@@ -1,0 +1,38 @@
+#RAILS
+
+Si queremos utilizar de manera online el rails, hay una pagina que se llama c9.io
+
+Si queremos un nuevo proyecto hacemos
+
+	rails new proyecto1
+
+donde rails es el comando para rails, new es el comando de crear nuevo proyecto, y proyecto1 es el nombre del proyecto
+
+PAra entrar al servidor usamos
+
+	rails s
+
+Para cerrarlo usamos
+
+	control + c
+
+SIEMPRE LEVANTAR EL SERVIDOR RAILS DESDE UNA CARPETA QUE TENGA PROYECTO RAILS
+
+MODELO, VISTA, CONTROLADOR... esto es MVC
+
+En rails se pueden  hacer paginas estaticas (Sin base de datos) y paginas dinamicas (con base de datos)
+
+EL MVC, deja a un lado el M, cuando es una pagina estatica.
+
+El MVC, si deja el M y lo incluye como modelo en las paginas dinamicas.
+
+nuestro archivo de rutas es nuestro primer filtro.
+
+Si queremos colocar una pagina como defecto lo hacemos con
+
+	root 'pages#paginapordefecto'
+
+si queremos ver todas las rutas, decimos en el terminal:
+
+	rakes routes
+

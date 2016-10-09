@@ -1,0 +1,103 @@
+Clase 38 / 07 Octubre
+
+#FORMULARIOS
+asset path : Lista de directores.
+sprockets: Concatenar, mimificar, fingerprint, automatiza procesos de deploy de saas a CSS, comprime, marca.
+
+Veremos get y post
+
+Creamos un nuevo proyecto, se hace a traves de la consola y se coloca:
+
+	rails new nombreproyecto
+
+Ahora generaremos un nuevo controlador, en este caso se haria:
+
+	rails g controller publics home
+
+donde publics es el nombre del controlador y home el nombre del metodo.
+
+Ahora para crear indicar que una pagina es la que queremos que sea la principal a abrir el local host, se haria, modificando el archivo routes.rb, que esta dentro de config.
+
+	 # root 'welcome#index'
+
+Para agregar una vista general a todos los layouts, nos vamos a app -> views -> layouts -> application.erb
+
+Esto nos muestra los parametros, e informacion de la página donde nos encontramos parados.
+
+	<%= params %>
+
+Si declaramos variables de instancia lo hacemos con @. en este caso lo declaramos en el contraolador.
+
+	def home
+		@q = params[:q]
+	end
+
+Ahora de esta manera q esta disponible en params, ya que las variables de instancias permiten ser llamadas desde fuera del controlador. 
+
+
+En el modelo vista controlador, la vista recibe los datos del controlador y losmuestra en la pagina. El controlador es el cerebo que maneja los datos, envia o procesa.
+
+El modelo es basicamente la base de datos, donde se almacena la informacion manejada en el proyecto.
+
+Antes de usar el modelo, se debe construir el modelo.
+
+Se hace con el comando:
+
+	rails g model user name:string
+
+donde model, es el indicativo de que se generará un modelo, se indica el nombre de la bas de datos, se le pasa infinitos grupos como parametros, donde el primero **name** es el nombre, y luego de los dos puntos, el tipo de dato.
+
+active_record es un ORM.
+
+Al crear una base de datos en rails, lo primero que se hace es una migracion.
+
+El archivo de la migracion se encuentra en db -> migrate -> rb
+
+Todo lo que esta dentro de DEF CHANGE, rails debe saber como cambiarlo.
+
+en el change se crean el creado en, editado en, y el id que es el primary key
+
+con RAKE se corren las tareas.
+
+Si queremos correr la tarea de las bases de datos se hace con:
+
+	rake db:migrate
+
+
+Si queremos trabajar con la consola rails, se hace con
+
+	rails c
+
+Si queremos correr la base de datos, basta con escribir el nombre de ella en la conola.
+
+Ahora si queremos ver la tabla creada, la llamamos nuevamente.
+
+Para agregar un campo nuevo se ocupa:
+
+	rails generate migration addColumToTable colum:datatype
+
+que se traduce en:
+
+	rails generate migration addEdadToUser edad:integer
+
+Para mostardatos, tenemos los llamados:
+
+User.all
+
+User.first
+
+User.second
+
+User.where(name:"G")
+
+
+Si queremos interactuar con la base de datos podemos usar:
+
+	user = User.new
+
+
+
+Si no queremos que se vean las variables que envias, se usa POST.
+
+Para ello debemos cambiar el metodo al formulario.
+
