@@ -101,3 +101,29 @@ Si no queremos que se vean las variables que envias, se usa POST.
 
 Para ello debemos cambiar el metodo al formulario.
 
+Lo podemos hacer de tres formas:
+
+1. Poner el TOKEN en el formulario:
+
+		<%= hidden_field_tag :authenticity_token, 
+		form_authenticity_token %>
+
+2. Utilizar el FORM HELPER de RAILS:
+
+		<%= form_tag(pages_save_form_path, method: 
+		"post
+		") do %>
+		<%= text_field_tag(:q) %>
+		  <%= submit_tag("Enviar
+		") %>
+		<% end %>
+
+3. Saltar la verificación:
+
+		skip_before_action :verify_authenticity_token
+
+Al agregar esto, arreglaremos el problema de la verificación de token.
+
+
+
+

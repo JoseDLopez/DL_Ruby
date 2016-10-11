@@ -29,5 +29,355 @@ Cuando queremos crer el objeto a partir de la clase, lo instanciamos, y sería:
 
 	lego1 = MoldeLego.new
 
+Los objetos tienen identidad, comportamiento y atributos (propiedades).
+
+####IDENTIDAD DE LOS OBJETOS
+
+En Ruby, todos los objetos tienen un identificador, que puede ser capturado con el método:
+
+	.object_id
+
+Ejemplo:
+
+	lego1.object_id			=>		#=>78987774019283
+
+####COMPORTAMIENTO DE LOS OBJETOS
+
+A los objetos se le definen comportamientos agregando métodos dentro de una clase.
+
+Ejemplo: Deseamos que el molde de lego tenga la capacidad de acolparse con otro, para ello. Agregariamos el método:
+
+	class MoldeLego
+		def metodo_acolpar(otro_lego)
+			return MoldeLego.new()
+		end
+	end
+
+####ESTADOS en OBJETOS
+
+Muchas veces necesitamos dotar a un objeto con estados, para ello utilizamos **variables de instancia**, las cuales se caracterizan por empezar con **@**.
+
+Entonces, en el caso de una fabrica de vehiculos, pasaria lo siguiente:
+
+	class Vehiculo
+		def encender ()
+			@encendido=on
+		end
+		def apagar ()
+			@encendido=off
+		end
+		def estado ()
+			@encendido
+		end
+	end
+
+De esta manera, todos los vehiculos que creemos tendran estados independientes:
+
+	a1 = Vehiculo.new
+	a2 = Vehiculo.new
+	a1.apagar
+	a1.estado
+	a2.estado
+
+Cada vez que sea crea un objeto, RUBY busca un metodo llamado **initialize**, donde nosotros indicaremos los valores por defecto de este nuevo objeto creado. Y poriamos indicar que el objeto ha sido inicializado.
+
+Nos referimos a metodo de instancia **initialize** como un **constructor**
+
+	class Vehiculo
+		def initialize (modelo)
+			@modelo = modelo
+		end
+	end
+
+El código anterior espera un modelo cuando se crea un objeto. ESte nos dara error si no se ingresa nada.
+
+Cuando una propiedad de un objeto es visible desde el exterior es llamada atributo, en este caso, modelo es un atributo. En ruby tienes un atajo a traves de attr_reader.
+
+En este punto el vehiculo no puede hacer nada, realmente solo tiene un atributo que es el modelo. Si queremos que haga algo le tenemos que dar **comportamiento**.
+
+Para ello creamos un nuevo método.
+
+	class Vehiculo
+		def initialize (modelo)
+			@modelo = modelo
+		end
+
+		def sound
+			"#{@modelo} hace Run run"
+		end
+	end
+
+De esta manera, si ejecutamos:
+
+	carro = Vehiculo.new("Mazda")
+	puts carro.sound
+	#=> "Mazda hace Run run"
+
+Ahora si queremos conocer el modelo del carro, ejecutariamos:
+
+	carro.modelo
+
+Pero obtendriamos un error. Ya que no tenemos un metodo que haga lo solicitado. Si queremos acceder al modelo que esta almacenado en la variable de instancia @modelo. 
+
+Entonces tendriamos que crear un metodo que pueda retornar el modelo. Ejemplo **.que_modelo**
+
+	class Vehiculo
+		def initialize (modelo)
+			@modelo = modelo
+		end
+
+		def sound
+			"#{@modelo} hace Run run"
+		end
+
+		def que_modelo
+			@modelo
+		end
+	end
+
+De esa manera si ejecutamos:
+
+	carro.que_modelo
+	#=> Mazda
+
+
+Y funciona!, es decir que hemos hecho un metodo **GETTER**.
+
+Ahora si quisieramos cambiar el modelo del vehiculo, tendriamos que crear un método **SETTER**. Entonces:
+
+	class Vehiculo
+		def initialize (modelo)
+			@modelo = modelo
+		end
+
+		def sound
+			"#{@modelo} hace Run run"
+		end
+
+		def que_modelo
+			@modelo
+		end
+
+		def set_modelo=(modelo)
+			@modelo =  modelo
+		end
+	end
+
+Si ejecutasemos:
+
+	carro.set_modelo("Honda")
+	carro.que_modelo
+	#=> Honda
+
+Excelente, hemos definudo un setter, y ha funcionado, ahora arreglemos el codigo para que sea mas facil de realizar para ruby.
+
+	class Vehiculo
+		#Lo primero que hacemos es inicializar el objeto:
+		def initialize(modelo)
+			@modelo = modelo
+		end
+
+		#Crearemos un metodo para que podamos leer el modelo esde afuera, es decir un reader.
+
+		def modelo
+			@modelo
+		end
+
+		#Ahora crearemos un metodo para que podamos establecerlo desde fuera.
+
+		def modelo=(modelo)
+			@modelo = modelo
+		end
+
+		#Ahora definiremos un comportamiento.
+		def motor
+			"El #{@modelo} hace run run"
+		end
+	end
+
+	puts "Creamos el objeto a partir de la clase Vehiculo"
+	a1 = Vehiculo.new("Chevrolet")
+
+	pp a1
+
+	puts "Verificamos su comportamiento"
+	puts a1.motor
+
+	puts "Ahora veremos que modelo es"
+	puts a1.modelo
+
+	puts "Realizaremos el cambio de modelo"
+	a1.modelo="Nissan"
+	puts a1.modelo
+
+Como te has dado cuenta, es complicado realizar esto por cada atributo del objeto.
+
+Para ello Ruby nos proporciona una manera todo en uno en la que crea los getter and setter por nostoros, usando el método **attr_accesor**.
+
+De esta manera si nuestro codigo es el siguiente, su comportamiento será el mismo:
+
+	class Vehiculo
+		#Utlizamos el metodo attr_accessor proporcionado por ruby.
+		attr_accessor :modelo
+
+		#Lo primero que hacemos es inicializar el objeto:
+		def initialize(modelo)
+			@modelo = modelo
+		end
+
+		#Ahora definiremos un comportamiento.
+		def motor
+			"El #{@modelo} hace run run"
+		end
+	end
+
+	puts "Creamos el objeto a partir de la clase Vehiculo"
+	a1 = Vehiculo.new("Chevrolet")
+
+	pp a1
+
+	puts "Verificamos su comportamiento"
+	puts a1.motor
+
+	puts "Ahora veremos que modelo es"
+	puts a1.modelo
+
+	puts "Realizaremos el cambio de modelo"
+	a1.modelo="Nissan"
+	puts a1.modelo
+
+####MULTIPLE ATTR_ACCESSOR
+
+Veamos que sucede cuando es mas de una variable la que queremos definir como setter y como getter:
+
+Vamos a definir color y km del vehiculo:
+
+	class Vehiculo
+		#Utlizamos el metodo attr_accessor proporcionado por ruby.
+		attr_accessor :modelo, :color, :km
+
+		#Lo primero que hacemos es inicializar el objeto:
+		def initialize(modelo,color="por definir",km = 0)
+			@modelo = modelo
+			@color = color
+			@km = km
+		end
+
+		#Ahora definiremos un comportamiento.
+		def motor
+			"El #{@modelo} hace run run"
+		end
+	end
+
+	puts "Creamos el objeto a partir de la clase Vehiculo"
+	a1 = Vehiculo.new("Chevrolet")
+	a2 = Vehiculo.new("Ferrari","Azul",1300)
+
+	pp a1
+
+	puts "Verificamos su comportamiento"
+	puts a1.motor
+
+	puts "Ahora veremos que modelo es"
+	puts a1.modelo
+
+	puts "Realizaremos el cambio de modelo"
+	a1.modelo="Nissan"
+	puts a1.modelo
+
+	pp a2
+	pp a2.color
+	pp a2.km
+
+En el ejemplo vimos como fue posible definir valores por defecto o valores que vienen del usuario, y ademas acceder a estos metodos.
+
+####CAMBIO DE MULTIPLES VARIABLES EN OBJETOS
+
+	Supongamos que queremos crear un metodo que nos permita cambiar de una vez la información del modelo, el color y los km.
+
+	class Vehiculo
+		#Utlizamos el metodo attr_accessor proporcionado por ruby.
+		attr_accessor :modelo, :color, :km
+
+		#Lo primero que hacemos es inicializar el objeto:
+		def initialize(modelo,color="por definir",km = 0)
+			@modelo = modelo
+			@color = color
+			@km = km
+		end
+
+		#Ahora definiremos un comportamiento.
+		def motor
+			#Ahora que tenemos el metodo reader y getter, es posible obtener el modelo sin hacer referencia a la variable de instancia.
+			"El #{modelo} hace run run"
+		end
+
+		#Con el self, evitamos que ruby se confunda y piense que estamos haciendo otra cosa que no sea definir.
+		def cambia_info (m,c,k)
+			self.modelo = m
+			self.color = c
+			self.km = k
+		end
+
+		def info
+			puts "Tenemos un vehiculo modelo #{modelo}, de color #{color}, y con #{km} kilometros"
+		end
+
+	end
+
+	puts "Creamos el objeto a partir de la clase Vehiculo"
+	a1 = Vehiculo.new("Chevrolet")
+	a2 = Vehiculo.new("Ferrari","Azul",1300)
+
+	pp a1
+
+	puts "Verificamos su comportamiento"
+	puts a1.motor
+
+	puts "Ahora veremos que modelo es"
+	puts a1.modelo
+
+	puts "Realizaremos el cambio de modelo"
+	a1.modelo="Nissan"
+	puts a1.modelo
+
+	pp a2
+	pp a2.color
+	pp a2.km
+	pp a1.info
+	a2.cambia_info("Subaru","Verde",5)
+	pp a2.info
+
+##METODOS Y VARIABLES DE CLASES
+
+Así como los objetos, las clases tambien tienen metodos y variables.
+
+En este caso, las variables de clases se crean utilizando dos **@**. Esto sería:
+
+	class Vehiculo
+		attr_accessor :modelo, :color, :km
+
+		@@numero_de_vehiculos = 0
+		def initialize (modelo="Definir",color="Gris",km=0)
+			@@numero_de_vehiculos += 1
+			@modelo = modelo
+			@color = color
+			@km = km
+		end
+
+		def self.total_numero_de_vehiculos
+			@@numero_de_vehiculos
+		end
+	end
+
+	puts Vehiculo.total_numero_de_vehiculos
+
+	#=> 0
+
+	carro1 = Vehiculo.new
+	carro2 = Vehiculo.new
+
+	puts Vehiculo.total_numero_de_vehiculos
+	#=> 2
 
 
