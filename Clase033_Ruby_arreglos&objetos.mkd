@@ -1,0 +1,28 @@
+#RUBY OBJETOS Y ARREGLOS
+
+###Recordando:
+
+1. ¿Cual es la diferencia entre una clase y un objeto?
+Una clase es conocida como el Molde o la fabrica de la cual se crean objetos, es decir un objeto es una instancia de clase.
+
+2. ¿Que hace el operador **new**?
+Con el operador **new**, se realiza el instanciamiento de un objeto a partir de una clase.
+
+3. ¿Que significa instanciar?
+Significa el crear o fabricar un objeto a partir de una clase.
+
+4. ¿Para que sirven los getters?
+Sirven para poder setear o establecer valores a variables de instancia.
+
+5. ¿Que hace def x=(x)?
+Permite definir un setter.
+
+6. ¿Que hace attr_reader :x ?
+Nos permite crear un metodo para que la variable pueda ser leida desde fuera del objeto.
+
+7. ¿Si existe la clase Monster, que devuelve Monster.class?
+Devuelve #=> Class
+
+8. ¿Si a = Monster.new, que devuelve a.class?
+Devuelve #=> Monster
+

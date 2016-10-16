@@ -1,0 +1,18 @@
+CLASE 42 - 14OCt
+
+Una vista parcial empieza con guion bajo.
+
+Se debe hacer el render de la vista parcial.
+
+OJO estudiar VISTA PARCIAL.
+
+Existe un lenguaje que se llama SLIM, que nos permite desarrollar en html de una forma pas rapida.
+
+PAsos heroku
+
+git init
+git add .
+git commit -m ""
+
+heroku create
+

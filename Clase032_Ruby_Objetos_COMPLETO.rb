@@ -171,3 +171,6 @@ pp a2.km
 pp a1.info
 a2.cambia_info("Subaru","Verde",5)
 pp a2.info
+
+pp Vehiculo.class
+pp a2.class

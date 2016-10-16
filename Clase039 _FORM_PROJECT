@@ -1,0 +1,66 @@
+#CLASE 39 - PRACTICA FORMULARIOS Y PROYECTO
+
+AGILIDAD,
+
+Es lo basico para desarollar cualquier proyecto.
+
+La palabra clave es requerimiento, es decir lo que necesita y quiere el proyecto.
+
+Existen requerimientos funcionales y no funcionales.
+
+Antiguamente se trabajaban según la metodologia cascada.
+
+De requerimiento en requerimiento. Es decir por capas. Es el modelo mas basico y mejor.
+
+Que es la agilidad?
+
+Se debe tener buena documentacion. El que y el por que. Es importante las dos cosas que y por que
+
+Reuniones de PIE, y pocas reuniones. Lo que se quiere es lo que se esta haciendo lo que se hace.
+
+Secuestrar al cliente. Se debe tener 24/7 disponible para saber lo que necesitas.
+
+##COMO SE HACEN LOS PROYECTOS:
+
+Se necesita tener 3 cosas claras:
+
+1. CLIENTE
+2. PROBLEMA
+3. SOLUCION
+
+La idea es que haya un match completo entre las tres partes.
+
+LA herramienta clave es **trello**, herramienta basica para compartir la idea original.
+
+Se tienen tres columnas basicas: To do, Doing, Done.
+
+Cada alumno tendra un trello, y cada semana se ve la tasa de avance.
+
+MODEO SCRUMB
+
+
+##Historias de Usuario
+
+Debemos ser capaz de ponernos en la posicion de las hostorias de usuarioy de los caso de uso. Que no significan lo mismo.
+
+Independiente: LO importante es que una historia de uso no requiera de otra.
+
+NEgociable: Debe ser reemplazable.
+
+Valor: Debe aportar valor al proyecto.
+
+Estimable: Que se pueda estimar la cantidad de tiempo que se necesita para hacerlo.
+
+Small: Debe tener funcionalidades pequenas.
+
+Test: Verificable que se pueda realizar pruebas.
+
+Y se debe poder testear automaticamente.
+
+###LISTAS PARA TRELLO
+
+- PRODUCT BACKLOG: Todos los requisitos.
+- BACKLOG: Listo para el sprint.
+- Next up: 
+
+
