@@ -1,6 +1,6 @@
-Clase 03-OCt
-
-Asset Path
+#RAILS
+#ASSET PATH
+03-Oct-16
 
 
 Asset Pipe
