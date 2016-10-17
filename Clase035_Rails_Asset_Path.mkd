@@ -1,33 +1,113 @@
+03-Oct-16
 #RAILS
 #ASSET PATH
-03-Oct-16
 
 
-Asset Pipe
+Es importante tener conocimientos sobre el **ASSET PATH** ya que nos permite saber donde se incorporan las imagenes, los CSS y los JS.
 
-HAremos un ejercicio donde crearemos un nuevo proyecto y haremos uso del asset.
+Se necesitan para poder crear o utilizar plantillas.
 
-1) Creamos el proyecto con:
+¿Que significa **ASSETS**?
 
-	rails new nombre_proyecto
+Se refiere a todo tipo de archivo que se necesita para completar un proyecto, como las imagenes de los CSS, los JS, tipografias, entre otros.
+
+##ASSET PATH
+
+Es un arreglo que contiene un listado de carpetas donde se cargan los assets. Dentro de RAILS es posible verlos con:
+
+	puts Rails.application.config.assets.paths
+
+##ORGANIZACION DE ASSETS
+
+Por defecto los assets se organizan en 2 carpetas principales:
+
+- app/assets -> Assets propios
+- vendo/assets -> Assets de terceros
 
 
-2) Arrancamos el servidor.
+###ASSET PIPELINE
 
-	rails s
+Es un framework completo encargado de **procesar**, **precompilar**, **minificar** y agregar un **fingerprint** a los assets.
 
-3) Creamos el controler con la pagina 1
-
-	
-
-4) Crear dos archivos CSS que modifiquen el color de background de la pagina.
-
-Se crean en app assets stylesheet
+En Rails, el asset pipeline es implementado porla gema **sprockets-rails**.
 
 
+###INCLUYENDO ARCHIVOS
 
-Si queremos integrar bootsrap a nuestro proyecto vamos a bootstrap buscamos el cdn y lo agregamos en layouts application .html
+En el caso de las imagenes solo es necesario agregarla en la carpeta assets, pero para los css y los js. Estos deben ser incluidos en el manifiesto.
 
-Recordar que la parte de css se debe colocar de primero y la parte de javascript se debe colocar de ultimo.
+El manifiesto es un archivo que especifica los assets a cargar.
 
-Si creamos stylesheets debemos colocarlo en app assets stylesheets.
+Que se ubican en: assets -> javascript/stylessheets -> application.js/application.css
+
+Estos dos archivos son quienes contienen directivas o instrucciones. Que en estos casos son cargar ciertos css o js.
+
+La idea es que en las directivas cargemos distintos requirement. En donde **EL ORDEN IMPORTA**, ya que se pueden sobreescribir. Y por defecto se cargan alfabeticamente.
+
+###SPROCKETS
+Este framework tiene cuatro funciones:
+
+- Preprocesar: Convertir rb a html, saas a css, coffe a java.
+- Concatenar: Tomar todos los css y convertirlosen uno solo. Mejora el desempeño ya que se convierte en un solo request.
+- Minificar: Tomar todos los esapacios vacios del css y los deja como un solo lote. Es decir los lleva a .min
+- Fingerprint: Les agrega una huella que es un identificador unico y sirve para hacer catching.
+
+Conrequire, podemos especificar el orden de la carga, ejemplo:
+
+	*= require primero.css
+	*= require ultimo.css
+	*= require_tree .
+	*= require_self
+
+
+##AGREGANDO ARCHIVOS CSS
+
+Para ello crearemos un nuevo proyecto y correremos el servicor.
+
+Una vez estemos listos con eso, agregaremos archivos css, estos se agregan en:
+
+	assets -> stylesheets -> archivo
+
+En este caso creamos dos archivos css llamados p1 y p2, en cada uno cargamos respectivamente:
+
+	body {
+	background-color: black;
+	}
+
+	body {
+	background-color: red;
+	}
+
+El resultado es que nuestra pagina quedo roja ya que fue lo ultimo que cargó.
+
+Pero podemos cambiar el orden especificando con anterioridad:
+
+	*= require p2.css
+
+Y el fondo quedaria en negro.
+
+Recordemos que el:
+
+- require_tree . : Es responsable de cargar recursivamente, tanto directorios como subdirectorios, todos los CSS dentro de esta carpeta.
+- require_self : Carga el CSS que hay contenido del archivo application.css en la posicion mencionada.
+
+###AGREGANDO JS
+Es sumamente parecido, pero cambia la carpeta y el application. Para ello vamos a assets -> javascript -> application.js
+
+Dentro de este archivo indicamos lo que se debe cargar.
+
+###ESPECIFICANDO CSS PARA CADA PAGINA
+
+Existe una manera que es usando **NAMESPACE**, y de esta manera se manipula segun la clase que tenga lo que se quiere mostrar.
+
+Ejemplo:
+
+Queremos que para pagina1 el fondo sea azul, para pagina2 sea verde y para pagina3 sea morado.
+
+Entonces en el application controler, establecemos esa clase:
+
+	<body class = "<%=params[:controller]%> <%=params[:action]%>">
+	<%= yield %>
+
+	</body>
+

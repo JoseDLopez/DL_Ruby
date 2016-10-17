@@ -1,0 +1,50 @@
+#CLASE PREPARACION PRUEBA
+
+Creamos proyecto y controladores:
+
+Parte 1: Manejo básico de formularios
+1. Crear un proyecto rails
+	
+	rails new clase42taller
+
+2. Crear el controller pages con la página x
+
+	rails g controller pages home index about x
+
+3. Convertir la página página x en la página de inicio
+
+Dentro de config -> routes.rb escribimos:
+
+	 root 'pages#home'
+
+4. Agregar el CDN bootstrap al layout
+
+Copiamos dentro de app -> views -> layouts -> application.html.rb
+
+
+5. Agregar un h1 con tu nombre a la página de inicio
+
+	<h1 class="text-uppercase text-center">Jose Daniel Lopez</h1>
+
+
+6. Inicializar GIT y agregar el repo
+
+	git init
+	git add .
+	git commit -am "agregar"
+
+7. Subirlo a Github
+
+
+
+8. Subirlo a Heroku
+9. Cambiar el nombre de la aplicación de heroku a tunombre.herokuapp.com
+10. Incorporar un formulario de registro donde el usuario debe inscribirse con su nombre, email y edad
+11. Crear un modelo para guardar los datos respectivos
+12. Realizar la migración
+13. Hacer el método en el controller para procesar el formulario y guardar los datos en el modelo
+14. el formulario debe apuntar al método que procesa el formulario
+15. Sacar un screenshot de rails s donde muestre que se ha guardado el registro.
+16. Subir los cambios a github
+17. Subir los cambios a heroku
+18. migrar la base de datos de heroku
