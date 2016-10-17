@@ -1,12 +1,74 @@
 #RAILS
+##INTRODUCCION
 
-Si queremos utilizar de manera online el rails, hay una pagina que se llama c9.io
+Versión actual 5.0.
+
+Trabajaremos sobre la 4.2.7
+
+Si desean utilizar de manera online el rails, hay una pagina que se llama **c9.io**.
+
+Ruby On Rails esta construido bajo un patrón conocido como **MVC**.
+
+##MVC
+
+MVC significa, Models, Views y Controllers. Es decir, **Modelos**, **Vistas** y **Controladores**
+
+####MODEL (Modelos)
+
+Mantiene la relacion entre los objetos y las bases de datos, y controla las validaciones, asociaciones, transacciones y mas.
+
+El subsistema es implementado por la libreria **ActiveRecord**, que provee la interfaz y el cohecionamiento de tablas en realacion a la base de datos y el codigo de programa Ruby que manipula la base de datos.
+
+Los metodos Ruby son generados automaticamente de los compaso de nombres de las tablas de base de datos.
+
+En resumen, el modelo:
+- Contiene los datos de la aplicacion (often linked to a database)
+- Contiene los estados de la aplicacion (Ejemplo que ordenes tiene el cliente)
+- Contiene todas las negociaciones logicas.
+- Notifica a Vista los cambios de estados.
+- No tiene conocimiento sobre las interfaces de ususario. Por lo tanto puede ser reutilizado.
+
+####VIEW (Vista)
+
+Es la presentacion de los datos en un formato particular, es gatillado por la decision del controlador de presentar la data. Son sistemas basadps en scripts como JSP, ASP, PHP y facil de integrar con tecnologia AJAX.
+
+El subsistema es implementado por la libreria **ActionView**, que es un sistema embebido de ruby para definir la presentacion de plantillas para la presentacion de la data. **(ERb) Embedded Ruby**.
+
+La vista:
+- Genera la interfaz de usuario que presenta la data al usuario.
+- Es pasivo, no realiza ningun procesamiento.
+- El trabajo de la vista esta terminado cuando la data es mostrada al usuario.
+- Muchas vistas pueden acceder al mismo modelo por diferentes razones.
+
+####CONTROLLER (Controlador)
+
+Facilita el direccionamiento de trafico de la aplicacion. Por un lado consulta el modelo especifico de la data y por el otro organiza la data (buscado, ordenando e informandola) en un formulario que se ajuste a las necesidades de la vista.
+
+El subsistema que implementa es el **ActionController**, que es la interconexion del **ActiveRecord** y el **ActionView**.
+
+El controlador:
+- Recive los eventos del mundo exterior (usualmente desde las vistas).
+- Interactua con el modelo.
+- Muestra las vistas apropiadas al usuario.
+
+##PAGINAS ESTATICAS Y DINAMICAS
+
+En rails se pueden  hacer paginas estaticas (Sin base de datos) y paginas dinamicas (con base de datos).
+
+EL MVC, deja a un lado el M, cuando es una pagina estatica.
+
+El MVC, si deja el M y lo incluye como modelo en las paginas dinamicas.
+
+
+##EJECUCION RAILS
 
 Si queremos un nuevo proyecto hacemos
 
 	rails new proyecto1
 
-donde rails es el comando para rails, new es el comando de crear nuevo proyecto, y proyecto1 es el nombre del proyecto
+donde rails es el comando para rails, new es el comando de crear nuevo proyecto, y proyecto1 es el nombre del proyecto.
+
+Este comando se debe ejecutar desde la carpeta del proyecto.
 
 PAra entrar al servidor usamos
 
@@ -16,23 +78,247 @@ Para cerrarlo usamos
 
 	control + c
 
-SIEMPRE LEVANTAR EL SERVIDOR RAILS DESDE UNA CARPETA QUE TENGA PROYECTO RAILS
+El servidor **siempre se debe levantar desde un proyecto rails**.
 
-MODELO, VISTA, CONTROLADOR... esto es MVC
+Si queremos instalar todas las gemas que vienen por defecto al crear el proyecto, utilizamos bundle, ejemplo:
 
-En rails se pueden  hacer paginas estaticas (Sin base de datos) y paginas dinamicas (con base de datos)
+	$ bundle
 
-EL MVC, deja a un lado el M, cuando es una pagina estatica.
+Si queremos ingresar a nuestro proyecto una vez que el servidor se encuentre encendido lo haremos ingresando en nuestro navegador web:
 
-El MVC, si deja el M y lo incluye como modelo en las paginas dinamicas.
+	http://localhost:3000
 
-nuestro archivo de rutas es nuestro primer filtro.
+###Archivos que encontramos en nuestro proyecto RAILS
 
-Si queremos colocar una pagina como defecto lo hacemos con
+- app/: Contiene los controladores, modelos, vistas, helpers, mailers and assets para la aplicacion.
+- bin/: Contiene el script de rails que inicia tu aplicacion y puede contener otros scripts parausar en el arranque de la aplicacion.
+- config/: Configura las reglas de funcionamiento de tu aplicacion, rutas, base de datos y mas.
+- config.ru: Configuracion Rack para servidores basados en Rack usados para iniciar la aplicacion.
+- db/ Contiene la informacion de tu base de datos y tambien de las migraciones de base de datos.
+- Gemfile: Estos archivos permiten especificar que dependencias de gemas existen para correr la aplicacion. Estos archivos son usados por la gema Bundler.
+- lib/: Módulos de extensión para tu aplicación.
+- log/: Archivos de los movimientos que se han hecho en tu aplicacion.
+- public/ La única carpeta que es vista por el resto del mundo tal cual como es. Contiene los archivos estaticos y los assets compilados.
+- Rakefile: Este archivo encuentra y carga las tareas que pueden ser corridas desde el temrinal. La definicion de tareas se hace a traves de los componentes de Rails.
+- README.rdoc: Es un resumen del manual de instrucciones de tu aplicacion. Se debe editar el archvo para contar al resto del mundo que hace la aplicacion y como usarla.
+- test/: Carpeta donde se encuentran distintos aparatos para hacer test.
+- tmp/: Carpeta con archivos temporales.
+- vendor/: Lugar para codigo de terceros. En una tipica aplicacion Rails esta incluye libreria y plugins.
+
+La mas importante es **app**, esta contiene nuestra aplicacion. Dentro de app, conseguiremos cuatro carpetas importantes assets (css,js,fuentes,typo), controller, modelo, view.
+
+##GENERADORES
+
+Rails tienen generadores, que nos permiten crear controllers, modelos, vistas, etc. Se pueden crear paginas automaticamente a partir de esto.
+
+Funciona de la siguiente manera:
+
+	rails generate nombre_generador nombre
+
+o de manera resumida:
+
+	rails g controller pages index intro help
+
+Lo anterior nos generaria en controlador pages, con los metodos index, intro y help.
+
+Atencion que siempre el nombre del controlador va en plural. Y ademas de crear el controlador con sus metodos, vistas, assets, helper y test. Va a crear **RUTAS** para acceder a estas paginas.
+
+Si queremos destruir un controlador ejecutamos:
+
+	rails destroy controller movies
+
+Esto destruye el controlador movies, vistas, assets, helper y tests asociados a este. Sin embargo no se eliminan las rutas creadas al generar el controlador.
+
+Si deseamos acceder a nuestra pagina creada, lo hacemos de la siguiente manera:
+
+	localhost:3000/controlador/metodo
+
+es decir
+
+	localhost:3000/pages/index
+
+
+####ROUTE
+
+Las rutas son manejadas por el archivo **routes.rb** que se encuentra en la carpeta config.
+
+Ahi se encuentran especificadas todas las rutas de nuestras vistas
+
+Si queremos colocar una pagina como defecto lo hacemos con:
 
 	root 'pages#paginapordefecto'
 
 si queremos ver todas las rutas, decimos en el terminal:
 
-	rakes routes
+	rake routes
+
+Si quisieramos agregar un nuevo metodo, o una nueva vista, ¿que sucede?.
+
+- Primero, si queremos accesar a ella con:
+
+	localhost:3000/pages/nueva
+
+obtendremos el error de que no existe una ruta para ello:
+
+	No route matches [GET] "/pages/nueva"
+
+Si lo agregamos en nuestro archivo de rutas seria:
+
+	get 'pages/nueva'
+
+Y si intentamos ingresar de nuevo, ahora tendriamos el siguiente error:
+
+	The action 'nueva' coud not be found for Pages Controller
+
+Esto quiere decir que nuestro controlador, a pesar de que sabe donde buscar, no consigue una accion o el metodo 'nueva'. Por lo tanto debemos ir a nuestro app, controller, pages controller y agregar el nuevo metodo:
+
+	class PagesController < ApplicationController
+	  def index
+	  end
+
+	  def help
+	  end
+
+	  def about
+	  end
+
+	  def contact
+	  end
+
+	  def nueva
+	  end
+	end
+
+De esta manera, cuando volvemos a intentar, el error que conseguimos es que no existe un view asociado a este metodo.
+
+Entonces debemos crear la vista o el template, y para acerlo vamos app -> views y ahi creamos una nueva vista html.erb
+
+De esta manera, cuando finalmente intentamos de ingresar de nuevo a esta nueva vista. Rails la logra conseguir, porque tenemos:
+
+- Ruta
+- Metodo en el controlador
+- Template para mostrar en vista
+
+
+##EDITAR VISTAS GENERADAS
+
+Se logra haciendo uso de **ERB**, este es un lenguaje de templating, su manipulacion consiste en:
+
+- Ejecutar codigo ruby dentro de la etiqueta:
+
+	<% %>
+
+- Imprimir el resultado de la expresion en la etiqueta:
+
+	<%= %>
+
+- No agrega salto de linea despues de la expersion:
+
+	<% -%>
+
+- Comenta el codigo para que no se ejecute:
+
+	<%# %>
+
+¿Para que sirve esto?, pues nos permite infinidad de cosas, ya que ejecutaremos codigo ruby en un template. Podriamos evaluar si un usuario cumple con una condicion, o traer resultados de la base de datos.
+
+Ya que el navegador no lee ERB, rails lee el codigo dentro del archivo y lo procesa y lo convierte a HTML.
+
+Recordando que el controller nos permite pasar variables a las vistas, podemos pasar por ejemplo una variable de instancia:
+
+En el PagesControler hariamos:
+
+	def nueva
+		@var = 5
+	end
+
+Y en la vista de nueva:
+
+	<%= @var %>
+
+Con ello veriamos en la vista el valor de la variable **var**.
+
+###LINKS
+
+Cuando deseamos agregar links, se utiliza el prefijo path, este nos llevara a su ruta relativa. Ejemplo:
+
+	<a href="<%= pages_index_path %>"> Index </a>
+
+Si necesitaramos la ruta absoluta lo hacemos con url:
+
+	<a href="<%= pages_index_url %>"> Index </a>
+
+Tambien tenemos helper que hacen lo mismo:
+
+	<%= link_to "Index" pages_index_path %>
+
+
+###BEFORE ACTION
+
+Permite ejecutar codigo bajo ciertas condiciones. Esto nos permite ejecutar codigo con prioridad. A estos metodos que solo procesan informacion es buena practica colocarlos como privados para que no puedan ser llamados desde afuera, es decir:
+
+	class PagesController < ApplicationController
+	  before_action :set_variables
+	  def index
+	  end
+
+	  def help
+	  end
+
+	  def about
+	  end
+
+	  def contact
+	  end
+
+	  def nueva
+	  end
+
+	  private
+	  def set_variables
+	    @variable = 6
+	  end
+	end
+
+##AGREGANDO IMAGENES
+
+Cuando es necesario agregar imagenes se utilizan los **asset_path**. Tanto image_tag como img src serian:
+
+	<%= image_tag 'imagen-prueba.png' %>
+	<img src="<%= asset_path 'imagen-prueba.png' %>">
+
+Los archivos se guardan en los assets. En este caso assets -> images
+
+Queremos agregarla:
+
+	<%= image_tag "back.jpg", class: "img-circle" %>
+
+
+##VIEW APPLICATION - PAGINA MAESTRA
+
+Esta la encontramos en la ruta: app -> views -> layouts -> application.html
+
+Este archivo nos permite editar la estructura general que utilizan las vistas para ser visualizadas, es decir es la plantilla mestra, ya que las vistas se agregan en el apartado de :
+
+	<%= yield %>
+
+
+##VISTAS PARCIALES
+
+Es una parte de un archivo HTML que simplemente se pone en otro archivo. Por convencion empiezan siempre con el prefijo **_** y esto ayuda a los programadores a distinguir que vistas no estan completas o cuales son parciales para ser insertadas.
+
+Ejemplo lo haremos con el navbar, tomaremos todo el codigo y lo escribiremos en un archivo que llamaremos:
+
+	_navbar.html.erb
+
+Este se guarda en la ruta:
+
+	app/views/layouts
+
+Y lo que haremos es llamarlo de la siguiente manera:
+
+	<%= render 'layouts/navbar' %>
+
+
+
 
