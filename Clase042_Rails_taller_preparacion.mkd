@@ -35,16 +35,213 @@ Copiamos dentro de app -> views -> layouts -> application.html.rb
 
 7. Subirlo a Github
 
-
+	git remote add origin git@github.com:JoseDLopez/Clase_042_Taller.git
 
 8. Subirlo a Heroku
+
+	heroku create
+	heroku open
+
+Debido a que heroku no soporta sqlite debemos desactivarlo e indicar que es solo para prueba y no produccion:
+
+	# Use sqlite3 as the database for Active Record
+	gem 'sqlite3', group: :development
+
+Y como queremos tener base de datos tenemos que usar pg:
+
+	gem 'pg', group: :production
+
+Luego de esto hacemos un bundle para que se instale la gema:
+
+	bundle
+
+Y se modificara el GEMFILE y GEMFILE.LOCK, por lo tanto hacemos commit y podemos hacer push luego.
+
+	git commit -am "cambio de base de datos"
+	git push heroku master
+
 9. Cambiar el nombre de la aplicación de heroku a tunombre.herokuapp.com
+
+Para ello ejecutamos:
+
+	heroku apps:rename josedaniellopez
+
+
 10. Incorporar un formulario de registro donde el usuario debe inscribirse con su nombre, email y edad
+
+Se agrega el formulario de manera normal.
+
 11. Crear un modelo para guardar los datos respectivos
+
+Primero veamos los parametros que van pasando...
+
+**IMPORTANTE**
+
+**name** es lo que pasa los datos al modelo.
+
+Para crear le modelo lo hacemos de la siguiente manera:
+
+	rails g model user name:string
+
+en nuestro caso sera
+
+	rails g model client name:string email:string edad:integer
+
+Este proceso nos crea, un invoke de active_record
+
+crea una registro de creaacion. cada vez que se hace una migracion se genera un archivo de registro.
+
+se crea una tabla, e indica donde lo creo.
+
+Por defecto se crea un id de test.
+
+
 12. Realizar la migración
+
+Realizamos la migracion siempre que se tenga conectado el metodo entre page controller y la pagina donde se van a guardar los datos.
+
+	rake db:migrate
+
+
+Si queremos ver la base de datos, bast con llamarla segun su modelo, es decir:
+
+	rails c
+	Client
+
+Ahi nos indica como esta configurada.
+
+PERO ES MUY IMPORTANTE HACER:
+
+	Client.connection
+
+Para agregar uno manual hariamos:
+
+	Client.create ({name: "Jose", edad: 18, email: "jose@jose.cl"})
+
+Ahora debemos ir a nuestro application controller, para delcarar las variables de instancia que seran las que se iran pasando a la base de datos.
+
+  def home
+  	@nombre_completo = params[:nombre_completo]
+  	@correo_electronico = params[:correo_electronico]
+  	@edad = params[:edad]
+  end
+
 13. Hacer el método en el controller para procesar el formulario y guardar los datos en el modelo
+
+Hacemos el metodo guardar_cliente en el controller:
+
+  def guardar_cliente
+    @nombre_completo = params[:nombre_completo]
+    @correo_electronico = params[:correo_electronico]
+    @edad_usuario = params[:edad_usuario]
+
+    unless @nombre_completo.blank?
+      Client.create({
+        name: @nombre_completo,
+        email: @correo_electronico,
+        edad: @edad_usuario
+      })
+    end
+
+    redirect_to pages_home_path
+  end
+
+y agregamos la ruta para que sea visible.
+
+
 14. el formulario debe apuntar al método que procesa el formulario
-15. Sacar un screenshot de rails s donde muestre que se ha guardado el registro.
+
+	<form method="post" action="<%= pages_guardar_auto_path %>">
+
+	<form method="get" action="<%= pages_guardar_cliente_path %>">
+
+para el post debemos modificar el archivo de rutas:
+
+	post 'pages/guardar_auto'
+
+
+Para el post nos dara un problema de TOKE, y agregamos al form:
+
+	<input type="hidden" 
+       value="<%= form_authenticity_token() %>" 
+       name="authenticity_token"/>
+
+15. Sacar un screenshot de rails s donde muestre que se ha guardado el registro.}
+
 16. Subir los cambios a github
+
+
 17. Subir los cambios a heroku
+
 18. migrar la base de datos de heroku
+
+
+
+
+
+NOTAS
+formulario el action tenemos que especificarlo.
+
+input type submit
+
+PAra crear un modelo para guardar los daots se hace
+
+	rails g model user name:string age:integer email:string
+
+antes de hacer la migracion se revisa que el migrate tenga los campos bien cargados
+
+se hace la migracion con 
+
+	rake db:migrate
+
+
+y probamos creando un usuario desde la consola
+
+	rails c
+	User.new
+
+para crear el segundo metodo lo hacemos con get o opost
+
+eso le damos duta en el routes.rb
+
+luego lo definimos en el controlador.
+
+	def save_user
+		USer.create(name: params[:name],age: params[:age])
+	end
+
+DEBEMOS HACER QUE EL FORMULARIO APUNTE CORRECATMENTE al path del metodo en el controlador.
+
+revisamos si el user es creado
+recuerda que el formulario debe tener metodo y apuntar
+
+y luego de hacer el save user debemos redirigirlo a la pagina principal.
+
+al final tenemos que migrar la base de datos en heroku.
+
+es recomendable indicar que se utiliza la version de ruby 2.3.1
+
+	heroku run rake db:migrate
+
+es necesario hacerlo para migrar la base de datos de heroku
+
+--------------------------------------------
+
+Lo mas importante es analizar el index
+
+se toma, se copia y se pega. y sera otra pagina.
+
+para agregar el controller pages landing.
+
+se agrega en el application controller, y en el pages controller se agrega el landing.
+
+luego en view agregamos el landing.
+
+ćon el 
+
+	render layout: 'layouts/layout2'
+
+hacemos que el view layout utilice el layout2
+
+el llamado del application siembre se debe agregar en un nuevo layout.
+

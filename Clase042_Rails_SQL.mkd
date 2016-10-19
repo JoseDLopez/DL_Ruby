@@ -1,0 +1,150 @@
+CLASE 44
+19-Oct-16
+#INTRODUCCION A SQL
+
+Debemos hacer una instalacion de paquetes.
+
+Instalaremos PostgreSQL 9.5
+
+Lo hacemos con:
+
+	sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+
+	wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+
+	sudo apt-get update
+
+	sudo apt-get install postgresql postgresql-contrib libpq-dev
+
+Para ver la version de PSQL vemos:
+
+	psql --version
+
+Si muestra lo siguiente es porque todo esta ok:
+
+	psql (PostgreSQL) 9.6.0
+
+Para entrar a POSTGRESQL hacemos lo siguiente:
+
+	sudo -u postgres psql
+
+Postgre es un servicio, eso quiere decir que corre en el background. Cuando entramos desde el bash, entramos al psql que es un interprete de comandos para el sql.
+
+Es decir vamos:
+
+	bash -> psql
+
+Es decir que postgre puede ser que se encuentre en nuestro pc o en un servidor. Tiene dos maneras de conectarse:
+
+	Local -> socket. ó TCP/IP
+	Remoto -> TCP/IP
+
+El ususario por defecto para entrar a postgre se llama **postgres**.
+
+Si nosotros de buenas a primeras queremos entrar a la base de datos haciendo:
+
+	psql
+
+Recibiremos un error ya que el bash interpretara que queremos entrar con el nombre de usuario que tenemos por defecto.
+
+Entonces podemos ejecutar un comando que nos permite ingresar como este usuario **postgres**
+
+Lo primero que debemos hacer es ejecutar el servidor o echar a andar el sistema, con:
+
+	sudo service postgresql start
+
+Para entrar hacemos:
+
+	sudo -u postgres psql
+
+Si queremos salir hacemos
+
+	\q
+
+Con este comando nos colocamos con nombre de usuario postgres:
+
+	sudo su postgres
+
+Y ahora si podemos decir que cree nuestro nombre de usuario.
+Si queremos crear usuarios hacemos (OJO EN LA TERMINAL DE PSQL):
+
+	createuser -s nombredeusuario
+
+ejemplo creando con mi nombre:
+
+	postgres-# createuser -s josedaniel
+
+Nos salimos del usuario con nombre de postgres:
+
+	exit
+
+Y ahora probamos entrar con nuestro usuario normal:
+
+	(precise)josedaniel@localhost:~$ psql
+	psql: FATAL:  database "josedaniel" does not exist
+
+Como ven, nos dan error de que no tenemos base de datos. Ahora la crearemos:
+
+Para ello debemos entrar a la base de datos, y lo haremos como usuario **postgres**
+	sudo -u postgres psql
+	\du
+
+Con el **\du** veremos los usuarios asignados.
+
+Con **\l** podemos ver todas las bases de datos creadas.
+
+Para crear nuestra base de datos hacemo:
+
+	create database nombredatabase;
+
+Es importante que creemos una base de datos con el nombre de nuestro usuario:
+
+	create database josedaniel;
+
+Ahora si podemos entrar con nuestro usuario:
+
+	postgres=# create database josedaniel;
+	CREATE DATABASE
+	postgres=# \q
+	(precise)josedaniel@localhost:~$ psql
+	psql (9.6.0, server 9.3.14)
+	Type "help" for help.
+
+	josedaniel=> 
+
+Si queremos agregar un password hacemos:
+
+	alter role usuario with password 'claveaqui';
+
+Ahora si queremos asignarle el atributo de superusuario:
+
+	alter role usuario with superuser;
+
+Ejemplo:
+
+	(precise)josedaniel@localhost:~$ sudo -u postgres psql
+	psql (9.6.0, server 9.3.14)
+	Type "help" for help.
+
+	postgres=# alter role josedaniel with superuser;
+	ALTER ROLE
+	postgres=# \d
+	No relations found.
+	postgres=# \u
+	Invalid command \u. Try \? for help.
+	postgres=# \du
+	                              List of roles
+	 Role name  |                   Attributes                   | Member of 
+	------------+------------------------------------------------+-----------
+	 josedaniel | Superuser                                      | {}
+	 postgres   | Superuser, Create role, Create DB, Replication | {}
+
+	postgres=# \q
+	(precise)josedaniel@localhost:~$ psql
+	psql (9.6.0, server 9.3.14)
+	Type "help" for help.
+
+	josedaniel=# 
+
+
+
