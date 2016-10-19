@@ -2,6 +2,7 @@ CLASE 44
 19-Oct-16
 #INTRODUCCION A SQL
 
+##INSTALACION
 Debemos hacer una instalacion de paquetes.
 
 Instalaremos PostgreSQL 9.5
@@ -146,5 +147,5 @@ Ejemplo:
 
 	josedaniel=# 
 
-
+##
 
