@@ -129,10 +129,6 @@ Ejemplo:
 
 	postgres=# alter role josedaniel with superuser;
 	ALTER ROLE
-	postgres=# \d
-	No relations found.
-	postgres=# \u
-	Invalid command \u. Try \? for help.
 	postgres=# \du
 	                              List of roles
 	 Role name  |                   Attributes                   | Member of 
@@ -422,21 +418,33 @@ Explica como se hizo la consulta
 
 9. Asignarle un ROL que solo permita hacer consultas con SELECT (no podrá ingresar):
 
-	movies=# GRANT SELECT ON movie TO consultas;
-	GRANT
-	movies=# \z movie
-	                             Access privileges
-	 Schema | Name  | Type  |       Access privileges       | Column privileges 
-	--------+-------+-------+-------------------------------+-------------------
-	 public | movie | table | josedaniel=arwdDxt/josedaniel+| 
-	        |       |       | consultas=r/josedaniel        | 
-	(1 row)
+		movies=# GRANT SELECT ON movie TO consultas;
+		GRANT
+		movies=# \z movie
+		                             Access privileges
+		 Schema | Name  | Type  |       Access privileges       | Column privileges 
+		--------+-------+-------+-------------------------------+-------------------
+		 public | movie | table | josedaniel=arwdDxt/josedaniel+| 
+		        |       |       | consultas=r/josedaniel        | 
+		(1 row)
 
 10. Cambiar de usuario al usuario creado.
 
+		(precise)josedaniel@localhost:~$ psql -U consulta -d movies -h 127.0.0.1
+		Password for user consulta: 
+		psql (9.6.0, server 9.3.14)
+		SSL connection (protocol: TLSv1.2, cipher: DHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
+		Type "help" for help.
 
-
+		movies=> 
 
 11. Confirmar que no puede hacer insert.
 
+		movies=> INSERT INTO movie (name) VALUES ('ANACONDA');
+		ERROR:  permission denied for relation movie
+		movies=> SELECT * FROM movie;
+		 id |    name     | ano  
+		----+-------------+------
+		  1 | El Rey Leon | 1984
+		(1 row)
 
