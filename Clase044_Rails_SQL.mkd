@@ -147,5 +147,296 @@ Ejemplo:
 
 	josedaniel=# 
 
-##
+##SQL
+Una base de dato es una estructura de tablas.
+
+SQL consiste en instrucciones para crear, actualizar, borrar y mostrar datos de estas tablas.
+
+Las tablas tienen una estructura definida y no puede ser dinamica. Cada columna tiene un espacio definido. Y las filas son los datos.
+
+Existen varios tipos de SQL:
+
+- MySQL
+- PSQL
+- MS SQL Server
+- Oracle
+
+Las tablas manejan tipo de datos, ya que con eso pueden buscar datos mas rapido.
+
+- Boolean
+- Int
+- Numeric
+- Money
+- Char
+- Varchar
+- Binary
+
+## VENTAJAS DE PSQL
+
+PostgreSQL, es la mejor opcion para trabajar con RAILS, nos permite guardar arreglos, posiciones de geolocalizacion, formularios anidados, agregar índices.
+
+## EJECUCION
+
+**\c** Nos permite cambiarnos de base de datos.
+
+Ejemplo:
+
+	josedaniel =# base2
+
+Esto nos llevara a la base de datos llamada "base2"
+
+Se acostumbra que los comandos van en mayusculas y las referencias en minusculas.
+
+Crear base de datos:
+
+	CREATE DATABASE nombre_base_de_datos
+
+Borrar base de datos:
+
+	DROP DATABASE nombre_base_de_datos
+
+##TABLAS Y COLUMNAS
+
+En nuestra base de datos vamos a crear múltiples tablas.
+
+La clave es especificar las columnas con sus correctos tipos de datos.
+
+Estructura:
+
+	CREATE TABLE table_name(
+		column1 datatype,
+		column2 datatype,
+	);
+
+Ejemplo:
+
+	CREATE TABLE personas(
+		name varchar(64),
+		age integer
+	);
+
+
+Esto se hace dentro la base de datos.
+
+	josedaniel=# CREATE TABLE personas (name varchar (64),age integer);
+	CREATE TABLE
+	josedaniel=# \dt
+	           List of relations
+	 Schema |   Name   | Type  |   Owner    
+	--------+----------+-------+------------
+	 public | personas | table | josedaniel
+	(1 row)
+
+Ahora ingresaremos datos en nuestra base de datos.
+
+Esto lo haremos asi:
+
+	josedaniel=# INSERT INTO personas (name) VALUES ('José');
+	INSERT 0 1
+
+Para seleccionar datos de una base de datos lo hacemos con **SELECT**
+
+	josedaniel=# SELECT * from personas;
+	 name | age 
+	------+-----
+	 José |    
+	(1 row)
+
+Ahora agregemos otro con los datos de nombre y edad:
+
+	josedaniel=# INSERT INTO personas (name, age) VALUES ('Victor', 20);
+	INSERT 0 1
+	josedaniel=# SELECT * from personas;
+	  name  | age 
+	--------+-----
+	 José   |    
+	 Victor |  20
+	(2 rows)
+
+Si queremos modificar nuestra tabla, es decir agregandole una columna lo podemos hacer:
+
+	josedaniel=# ALTER TABLE personas ADD COLUMN email varchar(60);
+	ALTER TABLE
+	josedaniel=# SELECT * FROM personas;
+	  name  | age | email 
+	--------+-----+-------
+	 José   |     | 
+	 Victor |  20 | 
+	(2 rows)
+
+Si creamos un dato tipo SERIAL, eso quiere decir que se va incrementando automaticamente a medida que entran datos en la base de datos, con ello creamos id:
+
+	josedaniel=# CREATE TABLE tablamagica (id SERIAL, name varchar(50), email varchar(50));
+	CREATE TABLE
+	josedaniel=# \dt
+	             List of relations
+	 Schema |    Name     | Type  |   Owner    
+	--------+-------------+-------+------------
+	 public | personas    | table | josedaniel
+	 public | tablamagica | table | josedaniel
+	(2 rows)
+
+Ahora si ingresamos datos a la tabla:
+
+	josedaniel=# INSERT INTO tablamagica (name, email) VALUES ('Victor', 'victor@email.com');
+	INSERT 0 1
+	josedaniel=# INSERT INTO tablamagica (name, email) VALUES ('Pedro', 'pedro@email.com');
+	INSERT 0 1
+	josedaniel=# SELECT * FROM tablamagica;
+	 id |  name  |      email       
+	----+--------+------------------
+	  1 | Victor | victor@email.com
+	  2 | Pedro  | pedro@email.com
+	(2 rows)
+
+###SQL NO ES BINARIO
+
+En SQL existen tres estados, verdadero, falso y nulo.
+
+##OPERACIONES CLAVE:
+
+- SELECT
+
+- SELECT DISTINCT
+
+- EXPLAIN
+
+Explica como se hizo la consulta
+
+- WHERE: Sirve para filtar informacion.
+
+	SELECT * FROM personas WHERE email = 'pedrito@gmail.com'
+
+- UPDATE / DELETE -> **SIEMPRE** con un WHERE, ya que debemos discriminar a quien se le cambia, sino, lo hace con todos los usuarios.
+
+##EJERCICIO EN CLASES
+
+1. Crear la base de datos MOVIES:
+
+		josedaniel=# CREATE DATABASE movies;
+		CREATE DATABASE
+		josedaniel=# \l
+		                               List of databases
+		    Name    |   Owner    | Encoding  | Collate | Ctype |   Access privileges   
+		------------+------------+-----------+---------+-------+-----------------------
+		 josedaniel | postgres   | SQL_ASCII | C       | C     | 
+		 movies     | josedaniel | SQL_ASCII | C       | C     | 
+		 postgres   | postgres   | SQL_ASCII | C       | C     | 
+		 template0  | postgres   | SQL_ASCII | C       | C     | =c/postgres          +
+		            |            |           |         |       | postgres=CTc/postgres
+		 template1  | postgres   | SQL_ASCII | C       | C     | =c/postgres          +
+		            |            |           |         |       | postgres=CTc/postgres
+		(5 rows)
+
+2. Crear tabla movie con las columnas id y name:
+
+	Para eso nos tenemos que conectar a la base de datos que creamos:
+
+		josedaniel=# \c movies
+		psql (9.6.0, server 9.3.14)
+		You are now connected to database "movies" as user "josedaniel".
+		movies=# 
+
+	Ahora si creamos la tabla:
+
+		movies=# CREATE TABLE movie (id SERIAL, name varchar(90));
+		CREATE TABLE
+		movies=# \dt
+		          List of relations
+		 Schema | Name  | Type  |   Owner    
+		--------+-------+-------+------------
+		 public | movie | table | josedaniel
+		(1 row)
+
+3. Ingresar la pelicula EL REY LEON:
+
+		movies=# INSERT INTO movie (name) VALUES ('El Rey Leon');
+		INSERT 0 1
+		movies=# SELECT * FROM movie;
+		 id |    name     
+		----+-------------
+		  1 | El Rey Leon
+		(1 row)
+
+4. Ingresar la pelicula Terminator II:
+
+		movies=# INSERT INTO movie (name) VALUES ('Terminator II');
+		INSERT 0 1
+		movies=# SELECT * FROM movie;
+		 id |     name      
+		----+---------------
+		  1 | El Rey Leon
+		  2 | Terminator II
+		(2 rows)
+
+5. Alterar la tabla movie para agregar año:
+
+		movies=# ALTER TABLE movie ADD COLUMN ano integer;
+		ALTER TABLE
+		movies=# SELECT * FROM movie;
+		 id |     name      | ano 
+		----+---------------+-----
+		  1 | El Rey Leon   |    
+		  2 | Terminator II |    
+		(2 rows)
+
+6. Cambiar todos los datos de las peliculas existentes a 1984
+
+		movies=# UPDATE movie SET ano = 1984;
+		UPDATE 2
+		movies=# SELECT * FROM movie;
+		 id |     name      | ano  
+		----+---------------+------
+		  1 | El Rey Leon   | 1984
+		  2 | Terminator II | 1984
+		(2 rows)
+
+7. Borrar la pelicula Terminator II
+
+		movies=# DELETE FROM movie WHERE name = 'Terminator II';
+		DELETE 1
+		movies=# SELECT * FROM movie;
+		 id |    name     | ano  
+		----+-------------+------
+		  1 | El Rey Leon | 1984
+		(1 row)
+
+8. Crear un nuevo usuario en la base de datos:
+
+		movies=# \du
+		                              List of roles
+		 Role name  |                   Attributes                   | Member of 
+		------------+------------------------------------------------+-----------
+		 josedaniel | Superuser                                      | {}
+		 postgres   | Superuser, Create role, Create DB, Replication | {}
+
+		movies=# create user consultas;
+		CREATE ROLE
+		movies=# \du
+		                              List of roles
+		 Role name  |                   Attributes                   | Member of 
+		------------+------------------------------------------------+-----------
+		 consultas  |                                                | {}
+		 josedaniel | Superuser                                      | {}
+		 postgres   | Superuser, Create role, Create DB, Replication | {}
+
+9. Asignarle un ROL que solo permita hacer consultas con SELECT (no podrá ingresar):
+
+	movies=# GRANT SELECT ON movie TO consultas;
+	GRANT
+	movies=# \z movie
+	                             Access privileges
+	 Schema | Name  | Type  |       Access privileges       | Column privileges 
+	--------+-------+-------+-------------------------------+-------------------
+	 public | movie | table | josedaniel=arwdDxt/josedaniel+| 
+	        |       |       | consultas=r/josedaniel        | 
+	(1 row)
+
+10. Cambiar de usuario al usuario creado.
+
+
+
+
+11. Confirmar que no puede hacer insert.
+
 
