@@ -214,7 +214,7 @@ Ejemplo:
 
 Esto se hace dentro la base de datos.
 
-	josedaniel=# CREATE TABLE personas (name varchar (64),age integer);
+	josedaniel=# CREATE TABLE personas (name varchar(64),age integer);
 	CREATE TABLE
 	josedaniel=# \dt
 	           List of relations

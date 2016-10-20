@@ -1,5 +1,132 @@
 CLASE 45
 20-Oct-16
-#INTRODUCCION A SQL
+#PROFUNDIZANDO SQL
 
 La manera en que SQL, determina la forma en que trae los datos es **PLAN DE ACCION**
+
+###SELECCION DE DATOS
+
+Para seleccionar datos de la base de datos:
+
+El comando basico es:
+
+	SELECT * FROM tabla;
+
+Donde el * implica que son todos los datos y tabla, la tabla de la que se quiere tomar la informacion.
+
+Si no deseamos mostrar los elementos repetidos usamos **DISTINCT**:
+
+	SELECT DISTINCT(name) FROM personas;
+
+La clausula **WHERE** nos permite filtrar los datos que queremos seleccionar las base de datos.
+
+	SELECT * FROM users WHERE email = 'correo@ejemplo.com';
+
+Tambien se puede utiliar con operadores logicos:
+
+	SELECT * FROM users WHERE age = 28 or age = 29;
+
+	SELECT * FROM users WHERE age = 28 and sex = 'male';
+
+
+#####BUSQUEDA PARCIAL
+
+Nos permite buscar datos depende de como empiecen o terminen con alguna informacion.
+
+	SELECT * FROM users WHERE email like '%@hotmail.com';
+
+OJO CON LIMIT
+
+
+
+CLAUSULA GROUP BY
+
+###CONSTRAINS
+Restricciones que se colocan en nuestra base de datos.
+
+Existen reglas como, que un valor no sea nulo, que un valor sea mayor que un criterio, que el valor este dentro de un rango especifico.
+
+Con esto hablamos de integridad operacional, que lo que busca es que no exista duplicidad de datos. Serian:
+
+- NOT NULL: No puede ser nulo.
+- UNIQUE: No puede ser repetido.
+- PRIMARY KEY: NOT NULL + UNIQUE.
+
+con \? veremos todos los comandos que existen.
+
+Si queremos ver los indices, con \di, veremos las claves primarias o indices.
+
+
+- Iniciamos el servicio de PSQL:
+
+	sudo service postgresql start
+
+- Ahora entramos a nuesta base datos movies:
+
+	\c movies
+
+- Ahora vemos la tabla que tenemos disponible:
+
+		movies=# \dt
+		          List of relations
+		 Schema | Name  | Type  |   Owner    
+		--------+-------+-------+------------
+		 public | movie | table | josedaniel
+		(1 row)
+
+- Ahora ingresaremos varias peliculas al mismo tiempo:
+
+		movies=# INSERT INTO movie (name,ano) VALUES ('Toy Story', 1996),('Terminator I', 1983),('Cars',2002),('Looper',2010),('Inception',2006);
+		INSERT 0 5
+
+- Verificamos lo que tiene la base de datos:
+
+		movies=# SELECT * FROM movie;
+		 id |     name     | ano  
+		----+--------------+------
+		  1 | El Rey Leon  | 1984
+		  3 | Toy Story    | 1996
+		  4 | Terminator I | 1983
+		  5 | Cars         | 2002
+		  6 | Looper       | 2010
+		  7 | Inception    | 2006
+		(6 rows)
+
+- DEVOLVEMOS las primeras 3 peliculas (Ordenadas alfabeticamente)
+
+		movies=# SELECT * FROM movie ORDER BY name DESC LIMIT 3;
+		 id |     name     | ano  
+		----+--------------+------
+		  3 | Toy Story    | 1996
+		  4 | Terminator I | 1983
+		  6 | Looper       | 2010
+		(3 rows)
+
+		movies=# SELECT * FROM movie ORDER BY name ASC LIMIT 3;
+		 id |    name     | ano  
+		----+-------------+------
+		  5 | Cars        | 2002
+		  1 | El Rey Leon | 1984
+		  7 | Inception   | 2006
+		(3 rows)
+
+- Devolver las ultimas 3 peliculas ordenadas por año
+
+		movies=# SELECT * FROM movie ORDER BY ano ASC LIMIT 3;
+		 id |     name     | ano  
+		----+--------------+------
+		  4 | Terminator I | 1983
+		  1 | El Rey Leon  | 1984
+		  3 | Toy Story    | 1996
+		(3 rows)
+
+		movies=# SELECT * FROM movie ORDER BY ano DESC LIMIT 3;
+		 id |   name    | ano  
+		----+-----------+------
+		  6 | Looper    | 2010
+		  7 | Inception | 2006
+		  5 | Cars      | 2002
+		(3 rows)
+
+
+
