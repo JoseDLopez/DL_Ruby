@@ -1,0 +1,5 @@
+CLASE 45
+20-Oct-16
+#INTRODUCCION A SQL
+
+La manera en que SQL, determina la forma en que trae los datos es **PLAN DE ACCION**
