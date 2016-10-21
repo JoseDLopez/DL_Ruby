@@ -128,5 +128,85 @@ Si queremos ver los indices, con \di, veremos las claves primarias o indices.
 		  5 | Cars      | 2002
 		(3 rows)
 
+- Contar la cantidad de peliculas en la base de datos
 
+		movies=# SELECT COUNT(*) FROM movie;
+		 count 
+		-------
+		     6
+		(1 row)
+
+- Contar la cantidad de peliculas por año
+
+		movies=# SELECT ano, COUNT(ano) FROM movie GROUP BY ano;
+		 ano  | count 
+		------+-------
+		 1983 |     1
+		 1984 |     1
+		 2002 |     1
+		 1996 |     1
+		 2006 |     1
+		 2010 |     1
+		(6 rows)
+
+- Alterar la tabla para agregar la categoria de la pelicula
+
+		movies=# ALTER TABLE movie ADD COLUMN categoria varchar(60);
+		ALTER TABLE
+		movies=# SELECT * FROM movie;
+		 id |     name     | ano  | categoria 
+		----+--------------+------+-----------
+		  1 | El Rey Leon  | 1984 | 
+		  3 | Toy Story    | 1996 | 
+		  4 | Terminator I | 1983 | 
+		  5 | Cars         | 2002 | 
+		  6 | Looper       | 2010 | 
+		  7 | Inception    | 2006 | 
+		(6 rows)
+
+- Agregar categoria a todas las peliculas existentes
+
+		movies=# UPDATE movie SET categoria = 'TBD';
+		UPDATE 6
+		movies=# SELECT * FROM movie;
+		 id |     name     | ano  | categoria 
+		----+--------------+------+-----------
+		  1 | El Rey Leon  | 1984 | TBD
+		  3 | Toy Story    | 1996 | TBD
+		  4 | Terminator I | 1983 | TBD
+		  5 | Cars         | 2002 | TBD
+		  6 | Looper       | 2010 | TBD
+		  7 | Inception    | 2006 | TBD
+		(6 rows)
+
+
+Para poder hacer la siguiente pregunta agregaremos unas categorias:
+
+		movies=# UPDATE movie SET categoria = 'Animada' WHERE name = 'El Rey Leon' or name = 'Cars' or name = 'Toy Story';
+		UPDATE 3
+		movies=# UPDATE movie SET categoria = 'Accion' WHERE name = 'Terminator I' or name = 'Looper';
+		UPDATE 2
+		movies=# UPDATE movie SET categoria = 'Suspenso' WHERE name = 'Inception';
+		UPDATE 1
+		movies=# SELECT * FROM movie;
+		 id |     name     | ano  | categoria 
+		----+--------------+------+-----------
+		  1 | El Rey Leon  | 1984 | Animada
+		  3 | Toy Story    | 1996 | Animada
+		  5 | Cars         | 2002 | Animada
+		  4 | Terminator I | 1983 | Accion
+		  6 | Looper       | 2010 | Accion
+		  7 | Inception    | 2006 | Suspenso
+		(6 rows)
+
+
+- Obtener un listado de categorias sin repeticiones
+
+		movies=# SELECT DISTINCT(categoria) FROM movie;
+		 categoria 
+		-----------
+		 Suspenso
+		 Accion
+		 Animada
+		(3 rows)
 
