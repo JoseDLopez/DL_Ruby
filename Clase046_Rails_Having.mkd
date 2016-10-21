@@ -1,0 +1,5 @@
+
+
+HAVING -> se usa para filtrar datos de tablas agrupadas.
+WHERE -> aplica para datos de tablas existentes.
+
