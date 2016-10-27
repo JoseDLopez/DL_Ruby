@@ -1,0 +1,162 @@
+CLASE 47
+24-Oct-16
+#SQL RELACIONES Y MODELADOS
+
+Primero creamos el proyecto
+
+rails new nombre_app --database=postgresql
+
+Luego corremos rake db:migrate
+
+vemos que tenemos error de servidor
+
+Corremos el servidor con
+
+sudo service postgresql start
+
+ahora corremos rake db:migrate
+
+y tenemos error de que no hay base de datos.
+
+Ahora con el siguiente comando hacemos que desde rails creamos la base de datos:
+
+	rake db:setup
+
+Obtuvimos un error de UNICODE, y lo que hacemos es agregar la siguiente linea en el **database.yml** Que es el archivo que tiene el despliegue de la configuracion de la base de datos.:
+
+	  template: template0
+
+Y quedaria asi:
+
+		default: &default
+		  adapter: postgresql
+		  template: template0
+		  encoding: unicode
+		  # For details on connection pooling, see rails configuration guide
+		  # http://guides.rubyonrails.org/configuring.html#database-pooling
+		  pool: 5
+
+		development:
+		  <<: *default
+		  database: clase47_development
+
+Ahora corremos:
+
+	rake db:setup
+
+Y ahora podemos hacer
+
+	rake db:migrate
+
+Nos conectamos al psql:
+
+	psql
+
+Nos cambiamos de base de datos:
+
+		josedaniel=# \c clase47_development
+		psql (9.6.0, server 9.3.14)
+		You are now connected to database "clase47_development" as user "josedaniel".
+		clase47_development=# 
+
+Ahora crearemos un usuario en la base de datos y se le agrega rol y pasword y se le dan los permisos.
+
+Eso en caos de que se necesite.
+
+Vamos a crear un modelo., lead con nombre e email:
+
+	rails g model lead name:string email:string
+
+revisamos el modelo creado a ver si fue creado correctamente, en el archivo: create, y vemos que no este vacio.
+
+Una vez que nos aseguramos de eso hacemos la migracion.
+
+	rake db:migrate
+
+##LOS MODELOS
+
+Son dos cosas simultaneamente, son ORM y un logica de negocio.
+
+El modelo es donde se ingresan, actualian y se borran los datos, respetando la logica de negocio.
+
+LA funcion seria asi: Del Broswer al controler, del controler al modelo,y  del modelo a la basa de dato.
+
+LOS ORM son metodos deifnidos en el modelo, active record, es la capa que se comuncia con la base de dato por nosotros. Object relational mapper.
+
+LA GEMA PG es la encargada de conectar nuestro ORM con la base de datos.
+
+Conecta objetos de ruby con datos de la base de datos.
+
+doble flecha simboliza muchos
+
+una flecha simbolia uno.
+
+
+
+##EJERCICIO CLASE 47
+- Proyecto Nuevo con postgreSQL
+
+	rails new ejercicio_clase47 --database=postgresql
+
+Entramos al proyecto y tratamos de migrar la base de datos
+
+	cd ejercicio_clase47/
+	rake db:migrate
+
+Como no tenemos base de datos, no se puede, asi que creamos uno. Para ello corremos:
+
+	rake db:setup
+
+Nos da el error del unicode y agregamos en el archivo database.yml:
+
+	template: template0
+
+Ahora ejecutamos de nuevo:
+
+	rake db:setup
+
+Y ahora ejecutamos:
+
+	rake db:migrate
+
+En este punto ya esta la base de datos creada.
+
+
+- Crear el modelo Movie con el campo name:string
+
+	rails g model movie name:string
+
+Y verificamos el archivo de migraciona a ver si esta bien.
+
+- Crear el modelo Category con el campo name:string
+
+Haremos este punto y el siguiente en una sola linea..
+
+- Agregar la referencia de categoria a la pelicula
+
+	rails g model category name:string movie:references
+
+- Correr las migraciones
+
+	rake db:migrate
+
+- Insertar una categoria
+
+Para ello debemos entrar a la consola de rails:
+
+	clase47$ rails c
+	Running via Spring preloader in process 30994
+	Loading development environment (Rails 4.2.4)
+	2.3.0 :001 > 
+	2.3.0 :002 >   
+	2.3.0 :003 >   
+	2.3.0 :001 > Category.new(name: 'Accion')
+	 => #<Category id: nil, name: "Accion", movie_id: nil, created_at: nil, updated_at: nil> 
+
+
+- Instertar una película asociada a la categoria anterior
+
+	Movie.create(name: 'Terminator I',category_id:1)
+	Movie.create(name: 'Looper', Category: categories.name='Accion')
+
+- Intentar borrar la categoria

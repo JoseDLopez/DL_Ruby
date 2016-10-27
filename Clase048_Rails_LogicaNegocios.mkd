@@ -1,0 +1,123 @@
+CLASE 48
+25-Oct-16
+#Logica Negocios
+
+Antes revisamos la clase anterior.
+
+con find_by se devuelve uno solo, es decir un arreglo, en cambio el where devuelve una collecion, y si lo usamos tendriamos que ocupar first.
+
+Si se quiere por id, se usa solo find, no find by.
+
+FIND
+FIND BY
+WHERE
+
+Agregando una nueva columna
+
+	rails g migration addYearToCategory year:integer
+
+Revisariamos la migracion, y luego la corremos.
+
+##EJERCICIO EN CLASES
+Crear un nuevo proyecto en rails usando PostgreSQL, con la relacion muchas fotos un usuario.
+
+- Creamos los modelos y referencias
+
+Crearemos los modelos, como se es de muchas fotos se supone que el modelo de fotos debe tener una clave de referencia con el id del usuario.
+
+	rails new nombre_proyecto --database=postgresql
+	cd nombre_proyecto
+
+	rails g model User name:string age:integer email:string
+	rails g model Photo name:string user:references
+
+- Correr las migraciones
+
+Para ello corremos el servidor
+
+	sudo service postgresql start
+
+Inicializamos con:
+
+	rake db:setup
+
+Tenemos problema de unicode, editamos el database.yml
+
+	template:template0
+
+Y podemos hacer la migracion:
+
+	rake db:migrate
+
+Entramos en la consola de rails
+
+	rails c
+
+Debemos insertar un usuario:
+
+	User.create(name:'Maria',age:18)
+
+Ahora debemos insertar una foto asociada al usuario.
+
+	Photo.create(name:'Casa',user_id:1)
+	Photo.create(name:'Perro',user_id:3)
+
+Ahora trataremos de borrar un usuario:
+
+	User.first.destroy
+
+
+
+##EJERCICIO NUMERO 2 CLASES
+
+- Crear un modelo usuario con nombre y email
+
+	rails g model User name:string age:integer email:string
+
+
+- Crear un modelo llamado llamado tweet con contenido y agregar la referencia al usuario
+
+	rails g model Tweet contenido:string(145) user:references
+
+- Agregar las relaciones a los modelos (belongs_to y has_many según corresponda)
+
+El caso de Tweet ya tiene automaticamente el belongs_to, pero ahora en el modelo usuario colocamos el has_many :tweets
+
+- Generar el diagrama para verificar la relación
+
+PAra ello debemos agregar en nuestroa rchivo de gemfile:
+
+	gem 'railroady', group: :development
+
+Luego hacemos bundle
+
+	bundle
+
+Ahora si podemos ver el diagrama:
+
+	rake diagram:all
+
+
+
+- Crear un archivo Seed con 4 Tweets y 2 Usuarios
+
+
+
+Utilizar el método create! para los tweets
+Utilizar el método build para los usuarios 
+Agregar borrado en cascada a los tweets de un usuario
+Agregar borrado total de los tweets y usuarios al principio del seed
+Correr los seeds
+Buscar un usuario cuyo nombre sea "Javier"
+Mostrar los tweets de ese usuario
+
+
+
+LOGICA DE NEGOCIO
+
+El hecho de que haya relaciones de modelos es parte de logica de negocio.
+
+Se pueden hacer tambien relaciones logicas.
+
+Las reglas del negocio son todas las reglas que tenemos que incorporar al programa. Por ejemplo cuando un usuario se inscribe se le envia un mail.
+

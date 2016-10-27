@@ -1,0 +1,118 @@
+CLASE 49
+25-Oct-16
+#Modelos Avanzados
+
+Validaciones:
+
+Se utiliza para que los campos sean llenados correctamente.
+
+EJemplo, validar que el contenido de un tweet no este vacio, es decir que sea de presencia verdadero.
+
+Las validaciones se hacen en el modelo, justo debajo de la clase. El orden no es limitacion.
+
+##EJERCICIO ZOO
+- Crear el proyecto zoo
+
+	rails new zoo --database:postgresql
+	cd zoo
+
+- Crear el modelo animal_type con atributo nombre
+
+	rails g model Animal_type name:string{40}
+
+- Crear el modelo Animal con nombre y referencia a Animal_type
+
+	rails g model Animal name:string{40} Animal_type:references
+
+- Revisar y correr las migraciones
+
+	rake db:migrate
+
+- Establecer la relación de 1 a N en ambos modelos
+
+Al crear el modelo se hizo el belongs_to, pero para establecer la relacion se debe hacer el has_many, esto se coloca en el modelo.
+
+		class AnimalType < ActiveRecord::Base
+			has_many :animals
+		end
+
+- Validar la presencia del nombre del tipo de animal (reload! a la consola si estaba abierta)
+
+		class AnimalType < ActiveRecord::Base
+			has_many :animals
+		  validates :name, presence :true
+		end
+
+Para crear debemos llamar a la clase no al nombre de la tabla:
+
+		2.3.0 :008 > AnimalType.create
+		   (0.2ms)  BEGIN
+		   (0.2ms)  ROLLBACK
+		 => #<AnimalType id: nil, name: nil, created_at: nil, updated_at: nil> 
+
+
+- Instanciar un chango como tipo de animal
+
+		2.3.0 :015 > c= AnimalType.new(name:'chango')
+		 => #<AnimalType id: nil, name: "chango", created_at: nil, updated_at: nil> 
+
+
+- Ver si es válido
+
+		2.3.0 :016 > c.valid?
+		 => true 
+
+- Guardar al chango
+
+		2.3.0 :017 > c.save
+		   (0.3ms)  BEGIN
+		  SQL (0.6ms)  INSERT INTO "animal_types" ("name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["name", "chango"], ["created_at", "2016-10-26 23:19:45.929699"], ["updated_at", "2016-10-26 23:19:45.929699"]]
+		   (22.3ms)  COMMIT
+
+- Instanciar un tipo de animal sin nombre
+
+	2.3.0 :018 > unnamed = Animal.new
+	 => #<Animal id: nil, name: nil, animal_type_id: nil, created_at: nil, updated_at: nil> 
+
+- Ver si es válido, ver los errores
+
+	2.3.0 :021 > unnamed.valid?
+	 => true 
+
+- Crear a pancho, un animal del tipo chango
+
+		2.3.0 :024 > Animal.create(name:'Pancho',animal_type_id:c.id)
+
+		   (0.3ms)  BEGIN
+		  SQL (1.4ms)  INSERT INTO "animals" ("name", "animal_type_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["name", "Pancho"], ["animal_type_id", 2], ["created_at", "2016-10-26 23:25:29.590277"], ["updated_at", "2016-10-26 23:25:29.590277"]]
+		   (3.6ms)  COMMIT
+		 => #<Animal id: 1, name: "Pancho", animal_type_id: 2, created_at: "2016-10-26 23:25:29", updated_at: "2016-10-26 23:25:29"> 
+
+O tambien podemos crear asi:
+	
+		2.3.0 :028 > AnimalType.find_by(name:'chango').animals.build(name:'Perucho').save
+
+		AnimalType Load (0.6ms)  SELECT  "animal_types".* FROM "animal_types" WHERE "animal_types"."name" = $1 LIMIT 1  [["name", "chango"]]
+		(0.4ms)  BEGIN
+		SQL (1.0ms)  INSERT INTO "animals" ("name", "animal_type_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["name", "Perucho"], ["animal_type_id", 2], ["created_at", "2016-10-26 23:29:13.720577"], ["updated_at", "2016-10-26 23:29:13.720577"]]
+		(22.0ms)  COMMIT
+		=> true 
+
+
+##SCOPES
+
+Nos permiten agregar metodos para las busquedas en la base de datos.
+
+en un scopre se asume que siempre se devuelve un active record, en cambio en uno de clase se puede devolver lo que queramos.
+
+
+##AGREGANDO EN EL PROYECTO ZOO EL SCOPE LLAMADO CHANGOS
+
+	class Animal < ActiveRecord::Base
+	  belongs_to :animal_type
+
+		scope :son_changos, -> { where("animal_type_id =?",2)}
+
+	end
+
+

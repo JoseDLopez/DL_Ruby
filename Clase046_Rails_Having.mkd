@@ -1,5 +1,167 @@
-
+CLASE 46
+21-Oct-16
+#SQL RELACIONES Y MODELADOS
 
 HAVING -> se usa para filtrar datos de tablas agrupadas.
 WHERE -> aplica para datos de tablas existentes.
+
+
+IMPORTANTE REVISAR HAVING
+
+
+##FOREIGN KEY
+Clave Foranea.
+
+Recordando que la clave primaria sirve para mantener la integridad de una tabla. En este caso el Foreign Key nos permite mantener la integreidad a lo largo de dos tablas relacionadas.
+
+Es decir que para solucionar el problema de alterar la integridad de dos tablas en conjunto, es agregar un **FOREIGN KEY**.
+
+POSTGRES si tiene la manera de trabajar con foreign key, pero SQL lite no lo tiene.. Entonces si pasamos de SQL Lite a PSQL tendremos un problema.
+
+Para crear una tabla con un primary key y un foreign key se hace:
+
+	CREATE TABLE movie2 (id integer PRIMARY KEY, category_id integer REFERENCES catogries (id));
+
+Si se quiere agregar en una tabla ya existente:
+
+
+Par ver el funcionamiento de las claves en una tabla se puede hacer:
+
+	\d users
+
+Esto tambien implica que no podremos ingresar sin hacer una referencia a un padre.
+
+Para evitar que entre un valor null, se debe indicar que la tabla en esa columna no permita valores nulos.
+
+
+##EXPLAIN
+
+Cuando se le coloca explain a una consulta el te indica como la proceso y lo que le toma hacerla, y los costos de la consulta.
+
+	EXPLAIN SELECT * FROM users;
+
+##MODELAMIENTO
+
+El como crear la base de datos para despues obtener la informacion con select.
+
+Existen distintos tipos de relaciones.
+
+####RELACIONES 1 a 1
+
+Muchas veces las separaciones son semanticas, los datos de un usuario por un lado y los datos de la compañia sobre otro. Es muy importante un diseño semantico.
+
+En este tipo de relacion, la clave foranea solo se declara en una tabla. 
+
+####RELACIONES 1 a N
+
+Eso quiere decir que un ejemplo basico, un ususario puede tener muchos tweets, pero un tweet solo puede tener un usuario.
+
+####RELACIONES N a N
+
+ES imposible de modelar con las unicas dos tablas, por ello se tiene que agregar una tabla adicional entre ellos dos y ahi es donde se colocan las claves foraneas.
+
+
+
+#####DESAFIO
+DESAFÍO DE EQUIPOS Y
+JUGADORES
+- Crear la tabla equipos y la tabla jugadores, y la table intermedia
+- En la tabla intermedia crear las claves foráneas
+- Ingresar 5 jugadores, 5 equipos y 7 relaciones (un jugador puede jugar en más de un equipo
+- Obtener
+- La cantidad de jugadores por equipo
+- Los equipos sin jugadores
+
+Utilizamos la misma base de datos pelicula
+
+		josedaniel=# \c movies
+		psql (9.6.0, server 9.3.14)
+		You are now connected to database "movies" as user "josedaniel".
+		movies=#
+
+- Crear la tabla equipos y la tabla jugadores, y la table intermedia
+
+		movies=# CREATE TABLE equipos (id_e SERIAL PRIMARY KEY, nombre varchar(60), ciudad varchar(60));
+		CREATE TABLE
+
+		movies=# CREATE TABLE jugadores (id_j SERIAL PRIMARY KEY, nombre varchar(60), edad integer);
+		CREATE TABLE
+
+		movies=# CREATE TABLE juega_en (id_i SERIAL PRIMARY KEY, id_equipos integer REFERENCES equipos (id_e), id_jugadores integer REFERENCES jugadores (id_j));
+		CREATE TABLE
+
+- Ingresar 5 jugadores, 5 equipos y 7 relaciones (un jugador puede jugar en más de un equipo
+
+		movies=# INSERT INTO jugadores (nombre,edad) VALUES ('Jose','15');
+		INSERT 0 1
+
+		movies=# INSERT INTO jugadores (nombre,edad) VALUES ('Pedro','18');
+		INSERT 0 1
+
+		movies=# INSERT INTO jugadores (nombre,edad) VALUES ('Carlos','13');
+		INSERT 0 1
+
+		movies=# INSERT INTO jugadores (nombre,edad) VALUES ('Marco','19');
+		INSERT 0 1
+
+		movies=# INSERT INTO jugadores (nombre,edad) VALUES ('Frank','15');
+		INSERT 0 1
+
+		movies=# SELECT * FROM jugadores;
+		 id_j | nombre | edad 
+		------+--------+------
+		    1 | Jose   |   15
+		    2 | Pedro  |   18
+		    3 | Carlos |   13
+		    4 | Marco  |   19
+		    5 | Frank  |   15
+		(5 rows)
+
+		movies=# INSERT INTO equipos (nombre,ciudad) VALUES ('Cobresal','Cobresal');
+		INSERT 0 1
+
+		movies=# INSERT INTO equipos (nombre,ciudad) VALUES ('Deportes Talca','Talca');
+		INSERT 0 1
+
+		movies=# INSERT INTO equipos (nombre,ciudad) VALUES ('Santiago Morning','Santiago');
+		INSERT 0 1
+
+		movies=# INSERT INTO equipos (nombre,ciudad) VALUES ('Deportes Coquimbo','Coquimbo');
+		INSERT 0 1
+
+		movies=# INSERT INTO equipos (nombre,ciudad) VALUES ('Deportes la Serena','Serena');
+		INSERT 0 1
+
+		movies=# SELECT * FROM equipos;
+		 id_e |       nombre       |  ciudad  
+		------+--------------------+----------
+		    1 | Cobresal           | Cobresal
+		    2 | Deportes Talca     | Talca
+		    3 | Santiago Morning   | Santiago
+		    4 | Deportes Coquimbo  | Coquimbo
+		    5 | Deportes la Serena | Serena
+		(5 rows)
+
+Ahora agregaremos las relaciones:
+
+		movies=# INSERT INTO juega_en (id_equipos,id_jugadores) VALUES (1,2),(1,2),(1,5),(2,1),(2,2),(2,4),(4,3),(4,1),(5,4);
+		INSERT 0 9
+		movies=# SELECT * FROM juega_en;
+		 id_i | id_equipos | id_jugadores 
+		------+------------+--------------
+		    1 |          1 |            2
+		    2 |          1 |            2
+		    3 |          1 |            5
+		    4 |          2 |            1
+		    5 |          2 |            2
+		    6 |          2 |            4
+		    7 |          4 |            3
+		    8 |          4 |            1
+		    9 |          5 |            4
+		(9 rows)
+
+La idea es que ahora podamos hacer una consulta para poder ver todos los equipos y los jugadores que contiene.
+
+
+
 
