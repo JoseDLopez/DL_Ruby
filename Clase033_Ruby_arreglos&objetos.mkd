@@ -25,4 +25,3 @@ Devuelve #=> Class
 
 8. ¿Si a = Monster.new, que devuelve a.class?
 Devuelve #=> Monster
-
