@@ -13,7 +13,7 @@ Las validaciones se hacen en el modelo, justo debajo de la clase. El orden no es
 ##EJERCICIO ZOO
 - Crear el proyecto zoo
 
-	rails new zoo --database:postgresql
+	rails new zoo --database=postgresql
 	cd zoo
 
 - Crear el modelo animal_type con atributo nombre

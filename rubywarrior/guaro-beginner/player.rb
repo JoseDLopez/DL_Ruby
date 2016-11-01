@@ -1,60 +1,61 @@
 class Player
 	def initialize
 		@last_health = 20
-		@saved= 0
+		@ya_di_vuelta=false
+		@rescatados = 0
 	end
-
-
 	def play_turn(warrior)
 	# add your code here
-	#Veremos si hay algun cautivo que rescatar
-	#Para ello preguntamos, con un IF, existen cautivos por rescatar?, si existe vamos a la izquierda, sino, a la derecha
 
-		@direction = (@saved == 0) ? :backward : :forward
-	# Con esto definimos que iremos a la izquierda o la derecha.
-
-	#Ahora veremos que hacer con ese movimiento a esa direccion:
-
-		if (warrior.feel(@direction).empty?)
-			#Tenemos un espacio vacío, asi que nos preguntamos si debemos descansar.
-			if (should_rest warrior) == true
-				warrior.rest!
-			elsif (should_return warrior) == true
-				warrior.walk!(:backward)
-
-			else
-				warrior.walk!(@direction)
-			end
-
+		if check_twist(warrior) == true
+			warrior.pivot!
 		else
-			# #Ahora vermos que hacer en caso de que exista alguna entidad cerca.
-
-			#Verificamos que no sea un cautivo, si lo es, lo rescatamos, sino, lo atacamos
-			if warrior.feel(@direction).captive? 
-				warrior.rescue!(@direction)
-				@saved +=1
+			#Verificamos que vemos al frente
+			if check_front(warrior) == "captive"
+				#Tiene el guerrero cerca al rehen?
+				if (warrior.feel.captive?)
+					warrior.rescue!
+					@rescatados+=1
+				else
+					warrior.walk!
+				end
+			elsif check_front(warrior) == "enemy"
+				#Tenemos al enemigo cerca?
+				warrior.shoot!
 			else
-				warrior.attack!(@direction)
+				warrior.walk!
 			end
 		end
-		#Verificamos actualizar nuestra variable de salud
-		@last_health = warrior.health
+
+		last_health = warrior.health
 	end
 
-	def should_rest(warrior)
-		if @last_health > warrior.health
-			return false
-		elsif warrior.health < 18
+	def check_front(warrior)
+		if (warrior.look.any? {|cuadro| cuadro.captive?})
+			return "captive"
+		elsif (warrior.look.any? {|cuadro| cuadro.enemy?})
+			return "enemy"
+		end
+	end
+
+	def check_twist(warrior)
+		if @ya_di_vuelta== false
+			if (warrior.health < @last_health)
+				@ya_di_vuelta=true
+				return true
+			else
+				return false
+			end
+		end
+		
+		if @rescatados == 1 || @rescatados == 3
+			@rescatados +=1
 			return true
 		else
 			return false
 		end
 	end
 
-	def should_return(warrior)
-		if warrior.health < 7
-			return true
-		end
-	end
+	
 
 end

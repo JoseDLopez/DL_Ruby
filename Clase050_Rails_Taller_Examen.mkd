@@ -1,0 +1,169 @@
+27-Oct-16
+#EJERCICIO TIPO EXAMEN
+
+##PARTE BACKEND
+
+1. Crear una aplicacion llamada **tienda** con PostgreSQL
+	
+	Para crear la aplicacion ejecutamos:
+
+		rails new tienda --database=postgresql
+
+	- Realizar un commit con el proyecto vacio
+
+			cd tienda
+			git init
+			git add .
+			git commit -am "Se hace un commit con el proyecto vacío"
+
+	- Crear y moverse al branch development
+
+			git branch development
+			git checkout development
+
+
+2. Crear el modelo de categorias (**category**) con el campo nombre (**name**) y el modelo de productos.
+
+	- Antes de crear los modelos dibujar a mano el diagrama, y escoger donde agregar la columna con la clave foranea, si en  el producto o en la categoría.
+
+		Según esto decimos que la relación es un procucto puede tener una sola categoria, y una categoria puede tener muchos productos. es decir 1 -> N. Categoria -> Productos.
+
+		Entonces, la clave foranea iria en productos.
+
+		Crearemos los modelos:
+
+			rails g model Category name:string{40}
+			rails g model Product name:string{40} category:references
+
+	- Revisamos la migracion antes de correr rake db:migrate
+
+		Tenemos que hacer correr el servidor:
+
+			sudo service postgresql start
+
+		Inicializamos la base de datos:
+
+			rake db:setup
+
+		Agregamos el template para solucionar el error en database.yml
+
+			template: template0
+
+		Corremos de nuevo el setup y hacemos la migracion:
+
+			rake db:setup
+			rake db:migrate
+
+	- Añadir los archivos después de la migracion a GIT.
+
+			git add .
+			git commit -am "Se agregan migraciones"
+
+3. Se debe utilizar **railroady** para dibujar las relaciones.
+
+		Para ello agregamos en el **gemfile** lo siguiente y hacemos bundle:
+
+			gem 'railroady', group: :development
+
+		Ahora podemos hacer generar el diagrama:
+
+			rake diagram:all
+
+	- Despues de agregar el has_many, y generar el diagrama de nuevo:
+
+		Agregamos al modelo de category:
+
+			has_many :products
+
+		Corremos nuevamente el comando para generar el diagrama y vemos la diferencia:
+
+			rake diagram:all
+
+		Vemos que si se completa la relacion de 1 -> N
+
+4. El modelo producto solo debe aceptar productos con precios:
+
+		Esto quiere decir que debemos agregar la columna precio al modelo producto, para ello hacemos:
+
+			rails g migration AddPriceToProducts price:integer
+
+		Ahora ejecutamos la migracion:
+
+			rake db:migrate
+
+		Para validar que si tenga precio debemos colocar en el modelo de producto:
+
+			validates :price, presence: true
+
+		Para validar creamos un producto y vemos su validacion:
+
+			p = Product.new
+			p.valid?
+			p = Product.new(price:400)
+			p.valid?
+
+5. Validar que el producto tenga categoria:
+
+		Para esto debemos agregar una validacion en producto:
+
+			validates :category_id, presence: true
+			p = Product.new
+			p.valid?
+			p = Product.new(price:400,category_id:1)
+			p.valid?		
+
+6. Añadir el campo premium a los productos
+
+		Lo agregaremos de la siguiente manera:
+
+			rails g migration AddPremiumToProducts premium:boolean
+
+	- El campo **premium** debe ser falso por defecto, se puede hacer por callback o por migracion.
+
+		Para esto agregamos en el modelo de producto lo siguiente:
+
+			before_save :default_premium
+
+			def default_premium
+				unless self.premium
+					self.premium=false
+				end
+				true
+			end
+
+		Tambien se pudo haber colocado cuando se hacia la migracion:
+
+			default :false
+
+7. Dentro del archivo seeds.rb
+
+	- Borrado de todas las categorias y productos:
+
+			Product.destroy_all
+			Category.destroy_all
+
+		Tambien se puede hacer agregando en el modelo:
+
+			dependent: :destroy_all
+
+	- Agregar 3 Categorias:
+
+			Category.create([{name:'Tecnología'},{name:'Comida'},{name:'Útiles'}])
+
+	- Agregar al menos dos productos de cada categoria:
+
+			Category.find_by(name:'Tecnología').products.build(name:'Samsung Galaxy S5',price:600).save
+			Category.find_by(name:'Tecnología').products.build(name:'Iphone 7',price:700).save
+
+			Category.find_by(name:'Comida').products.build(name:'Pabellón',price:60).save
+			Category.find_by(name:'Comida').products.build(name:'Cabello de Ángel',price:70).save
+
+			Category.find_by(name:'Útiles').products.build(name:'Lápiz',price:6).save
+			Category.find_by(name:'Útiles').products.build(name:'Libreta',price:7).save
+
+			Product.create(name:'caja',price:4,category_id:Category.last.id)
+			Product.last.destroy
+
+	- Tomar el último producto y actualizarlo a premium:
+
+			Product.last.premiun=true

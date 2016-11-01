@@ -4,15 +4,17 @@ CLASE 47
 
 Primero creamos el proyecto
 
-rails new nombre_app --database=postgresql
+	rails new nombre_app --database=postgresql
 
-Luego corremos rake db:migrate
+Luego corremos 
+
+	rake db:migrate
 
 vemos que tenemos error de servidor
 
 Corremos el servidor con
 
-sudo service postgresql start
+	sudo service postgresql start
 
 ahora corremos rake db:migrate
 
@@ -90,6 +92,28 @@ Conecta objetos de ruby con datos de la base de datos.
 doble flecha simboliza muchos
 
 una flecha simbolia uno.
+
+####METODOS DEL MODELO
+
+Sirven para instanciar un objeto, puede ser:
+
+	Model.new(param1:valor1,param2:valor2)
+	Model.new({param1:valor1,param2:valor2})
+	Model.new param1:valor1,param2:valor2
+
+Un objeto instanciado se puede guardar con **.save**
+
+#####CREATE
+
+Cuando usamos **.create**, el objeto instanciado es guardado automaticamente en la base de datos.
+
+##BUSCANDO EN LOS REGISTROS
+
+- Todos los registros: **.all**
+- El primer registro del metodo: **.first**
+- El ultimo registro del metodo: **.last**
+- Un registro en especifico: **.find(id)**
+- Conjunto de registros que cumplen con la condicion: **.where(campo:valor)**
 
 
 
