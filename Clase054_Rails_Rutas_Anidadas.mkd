@@ -1,0 +1,104 @@
+#####Clase 54
+03-Nov-16
+#RUTAS ANIDADAS
+
+Lo que deberiamos saber:
+
+SCAFFOLD, saber como funcionan las rutas, los gets, resultados anonimos, strong params para agregar campos nuevos.
+
+
+Hoy seguiremos profundizando con REST, formularios anidados, y rutas anidadas.
+
+
+http://empieza.desafiolatam.com/cohorts/11/sections/153/edit
+
+donde el cohort es el principal
+
+Para que se anidan los recursos,
+
+La idea es la leer la informacion relacionada en diferentes niveles y utilizar multiples parametros en una sola llamada.
+
+Dentro del controller podemos rescatar el id del cohort con params[:cohort_id] y el id de la seccion con params[:id]
+
+Ejemplo comun:
+
+POST -> COMENTARIO
+
+En este sentido de creacion de dependencia, los comentarios dependen del POST y sin el post no representan algo.
+
+Al crear un comentario necesitamos guardarlo asociado al post, por lo que necesitamos rescatar el post.
+
+
+La estrategia REST dice que para anidar un recurso dentro de otro deberiamos hacerlo siguiente:
+
+	posts/5/comments
+
+Los comentarios son asociados a los posts.
+
+**EN RAILS 4 NO PODEMOS HACER UN SCAFFOLD ANIDADO"
+
+La idea es que las rutas anidadas guien al usuario en la navegacion, no necesariamente reprsenta las relaciones de la base de datos.
+
+
+Crearemos un nuevo proyecto con los posts y luego comentarios y luego asociaremos a nivel de modelo y luego anidaremos las rutas.
+
+	rails new posts_clase53
+
+
+
+
+
+Para anidar se pasa un bloque, y dentro de ese bloque, colocamos el elemento que queremos anidar. Y con eso se genera las siete rutas anidadas del recurso.
+
+IMPORTANTE SANITIZAR SIEMPRE
+
+Con el bloque, que se genera con el DO, se anida el recurso en otro. esto se hace en routes.rb.
+
+	resources :posts do
+		resources :comments
+	end
+
+Esto hace que se cree una ruta: posts/id_post/comments
+
+
+Si quisieramos ver todos los comentarios del post utilizamos el post_comments GET, y esto va al controllador index del comments.
+
+Para anidar el formulario, nos vamos al show del post. y una ves que tenemos los recursos anidados podemos pasar esos recursos en el formulario anidado.
+
+Con esto nos llevaria al create del comments.
+
+
+
+
+Ejercicio en clases
+
+1. Crear proyecto nuevo
+
+		rails new salon
+
+2. Este proyecto tiene grupos, personas y apuntes (3 niveles de anidamiento)
+
+	Crearemos con scaffold grupos, mientras que personas y apuntes lo haremos normal.
+
+		rails g scaffold Group name:string
+
+		rails g model Person name:string group:references
+
+		rails g model Note content:text person:references
+
+	Ahora agregamos la relacion en cada uno de los modelos:
+
+		class Person < ActiveRecord::Base
+		  belongs_to :group
+		  has_many :notes
+		end
+
+		class Group < ActiveRecord::Base
+			has_many :people
+		end
+
+		class Note < ActiveRecord::Base
+		  belongs_to :person
+		end
+
+

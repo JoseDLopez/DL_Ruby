@@ -2,6 +2,7 @@ require 'pp'
 
 class Entity
 	@@created=[]
+	@@all_entities=[]
 	attr_accessor :coordinate_x, :coordinate_y, :type, :zombified
 
 	def initialize (coordinate_x,coordinate_y,type)
@@ -29,6 +30,9 @@ class Entity
 
 	def self.created
 		@@created
+	end
+	def self.all_entities
+		@@all_entities
 	end
 end
 
@@ -58,7 +62,7 @@ def create_entity (x,type)
 
 			#Si es única pues creamos la entidad
 			if unique == true
-				Entity.new(c_x,c_y,type)
+				Entity.all_entities << Entity.new(c_x,c_y,type)
 				done =true
 			end
 		end
@@ -72,7 +76,9 @@ create_entity(2,'dog')
 pp Entity.created.length
 pp Entity.created
 
-
+pp Entity.all_entities
+puts "Solo mostramos el 2"
+pp Entity.all_entities[2]
 
 
 ##EJERCICIO

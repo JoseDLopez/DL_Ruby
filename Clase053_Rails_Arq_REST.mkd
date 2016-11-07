@@ -1,0 +1,63 @@
+#####Clase 53
+02-Nov-16
+#ARQUITECTURA REST
+
+¿Que es REST?
+
+Significa Representational State Transfer.
+
+Cuando hablamos de REST hablamos sobre **RECURSOS**.
+
+Ejemplo: En un blog los **posts** sn recursos, y los **comentarios** tambien lo son.
+
+
+
+
+
+NOTE: Investigar el significado de SCAFFOLD, y de diferencia entre put y patch.
+
+
+1 Abrimos formulario:
+
+	  <div class="field">
+	    <%= f.label :color %><br>
+	    <%= f.text_field :color %><br>
+	    <%= f.label :content %><br>
+	    <%= f.text_field :content %>
+	  </div>
+
+
+2. Vamos al color controller 
+
+	    def color_params
+	      params.require(:color).permit(:color,:content)
+	    end
+
+3. Ahora para mostrar:
+
+		<p id="notice"><%= notice %></p>
+
+		<p>
+		  <strong>Color:</strong>
+		  <%= @color.color %>
+		  <strong>Content:</strong>
+		  <%= @color.content %>
+		</p>
+
+		<%= link_to 'Edit', edit_color_path(@color) %> |
+		<%= link_to 'Back', colors_path %>
+
+#EJERCICIO EN CLASES
+
+1 Haremos una página para guardar las fechas de cumpleaños del curso.
+
+	rails new ejercicio_birthday
+	rails g scaffold Birthday date:date
+	rake db:migrate
+
+2 Agregar luego el nombre, agregar los campos manualmente y revisar que todo funcione bien.
+
+	rails g migration addNameToBirthday name:string
+
+
+3 Utilizar fullcalendar para mostrar los cumpleaños

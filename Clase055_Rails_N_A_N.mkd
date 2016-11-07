@@ -1,0 +1,47 @@
+#####Clase 55
+04-Nov-16
+#RELACIONES N a N
+
+Lo que haremos sera crear un proyecto y luego crear DOS SCAFFOLD
+
+Por que? Porque queremos agregar mulitples tags a multiples peliculas es decir relacion n a n
+
+	rails new cartelera
+
+	rails g scaffold Movie name:string
+
+	rails g scaffold Tag name:string
+
+Migramos
+
+	rake db:migrate
+
+La estrategia es colocar una tabla intermedia donde se coloquen los dos primary key que se relacionan.
+
+Entonces existen dos maneras
+3 tablas y 3 modelos
+
+3 tablas y 2 modelos.
+
+Probando con 3 tablas y 2 modelos:
+
+Para esto creamos una tabla intermedia.
+
+	rails g migration CreateJoinTableMovieTag movies tags
+
+luego corremos la migracion
+	
+	rake db:migrate
+
+Ahora debemos agregar en cada una movie y tag el has and velongs to many
+
+	has_and_belongs_to_many :movies
+	has_and_belongs_to_many :tags
+
+
+Repetir los pasos vistos anteriormente ahora en un nuevo código que tiene.
+Proyectos y personas, una persona tiene muchos proyectos, en un proyecto hay muchas personas.
+Apuntar root a project#index
+
+
+
