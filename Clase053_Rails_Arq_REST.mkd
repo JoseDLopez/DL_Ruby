@@ -11,20 +11,107 @@ Cuando hablamos de REST hablamos sobre **RECURSOS**.
 Ejemplo: En un blog los **posts** sn recursos, y los **comentarios** tambien lo son.
 
 
-
-
-
 NOTE: Investigar el significado de SCAFFOLD, y de diferencia entre put y patch.
+**SCAFFOLD**: Es un conjunto completo de modelos, migraciones, rutas, controladores y vistas creadas para administrar un recurso.
+
+Para generar un **SCAFFOLD** es necesario ejecutar el siguiente comando, por ejemplo queremos generar el conjunto completo de modelos, migraciones, rutas, controladores y vistas para un recurso llamado HighScore que llevara un registro de los puntajes mas altos de los videojuegos que jugamos.
+
+		rails generate scaffold HighScore game:string score:integer
+
+Esto, revisa que existe directorios para los modelos, controladores, ayudas, layouts, functional, test, stylesheets, crea las vistas, controlador, y la migracion de la base de datos (creando la tabla high_scores y los campos).
+
+Necesitaremos luego migrar, para completar la configuracion de la base de datos:
+
+		rake db:migrate
+
+Los recursos son mapeos entre las URL y las acciones que realiza el servidor. Cada recurso tiene distinta URL que permite realizar diversas acciones:
+
+	Prefix Verb		URI Pattern					Controller#Action
+	posts GET 		/posts(.:format)			posts#index
+	POST 			/posts(.:format)			posts#create
+	new_post GET 	/posts/new(.:format)		posts#new
+	edit_post GET 	/posts/:id/edit(.:format)	posts#edit
+	post GET 		/posts/:id(.:format)		posts#show
+	PATCH 			/posts/:id(.:format)		posts#update
+	PUT 			/posts/:id(.:format)		posts#update
+	DELETE 			/posts/:id(.:format)		posts#destroy
+
+###TIPOS DE ACCIONES
+
+Existen distintos tipos de acciones que podemos ejecutar, las mas frecuentes son:
+
+1. INDEX: Muestra todos los elementos de un recurso.
+
+2. SHOW: Muestra el detalle de un recurso.
+
+3. NEW: Muestra el formulario para crear un nuevo recurso.
+
+4. CREATE: Maneja la lógica de creación de un nuevo recurso.
+
+5. EDIT: Muestra el formulario para editar un recurso.
+
+6. UPDATE: Maneja la lógica de actualización de un recurso.
+
+7. Borra un recurso en específico.
+
+De estas acciones, existen algunas que requieren un identificador único y otras no, por ejemplo para mostrar los posts no necesitamos un identificador único:
+
+	Prefix Verb		URI Pattern					Controller#Action
+	posts GET 		/posts(.:format)			posts#index
+
+Mientras que para eliminar un elemento si necesitamos el identificador:
+
+	Prefix Verb		URI Pattern					Controller#Action
+	DELETE 			/posts/:id(.:format)		posts#destroy
 
 
-1 Abrimos formulario:
+###REQUEST
 
-	  <div class="field">
-	    <%= f.label :color %><br>
-	    <%= f.text_field :color %><br>
-	    <%= f.label :content %><br>
-	    <%= f.text_field :content %>
-	  </div>
+Cuando se ingresa una URL, se esta haciendo un **request** al servidor. El servidor procesa este request y entrega una respuesta.
+
+Un request puede ser: GET, POST, PATCH, PUT, DELETE.
+
+
+####EJEMPLO CREACION Y SCAFFOLD
+
+Generamos un nuevo proyecto:
+
+	rails new prueba_colores
+	rails g scaffold color color:string
+	**No confundir modelo con columna**
+	rake db:migrate
+	rake routes
+	Ejecutamos el comando para echar a anadar al servidor.
+	rails s
+
+Rrevisnado los controladores, modelos y vistas, nos damos cuenta de que el formulario, carga una vista parcial con _form. El form_for, crea un formulario utilizando el objeto y crea automaticamente rutas rest.
+
+
+Si agregamos un nuevo campo con:
+
+	rails g migration addContentToColor content:string
+
+Este, no nos agrega los campos a los formularios, ni los datos al index, ni a show ni a algun otro lado. Entonces ¿que debemos de hacer despues de realizar la migracion?:
+
+Debemos agregar el campo en el formulario para agregar y para editar, es decirl en el mismo _form.
+
+Agregar el campo en los strong params del controller.
+
+Mostrar el campo en la vista **show**.
+
+Mostrar el campo en la vista **index**
+
+
+###CODE NOTES
+
+1. Abrimos formulario:
+
+		  <div class="field">
+		    <%= f.label :color %><br>
+		    <%= f.text_field :color %><br>
+		    <%= f.label :content %><br>
+		    <%= f.text_field :content %>
+		  </div>
 
 
 2. Vamos al color controller 
@@ -49,15 +136,87 @@ NOTE: Investigar el significado de SCAFFOLD, y de diferencia entre put y patch.
 
 #EJERCICIO EN CLASES
 
-1 Haremos una página para guardar las fechas de cumpleaños del curso.
+1. Haremos una página para guardar las fechas de cumpleaños del curso.
 
-	rails new ejercicio_birthday
-	rails g scaffold Birthday date:date
-	rake db:migrate
+		rails new birthday_project
+		rails g scaffold Birthday date:date
+		rake db:migrate
 
-2 Agregar luego el nombre, agregar los campos manualmente y revisar que todo funcione bien.
+	En este caso debemos modificar el view para que las personas puedan incluir mas fechas en el select.
 
-	rails g migration addNameToBirthday name:string
+	Vamos a: app -> views -> birthdays -> _form
 
+	Y agregamos el siguiente codigo en el select del date:
 
-3 Utilizar fullcalendar para mostrar los cumpleaños
+		<%= f.date_select :date, :start_year => Time.now.year - 1 ,:end_year => Time.now.year - 60 %>
+
+2. Agregar luego el nombre, agregar los campos manualmente y revisar que todo funcione bien.
+
+		rails g migration addNameToBirthday name:string
+		rake db:migrate
+
+	El problema es que en este punto nadie lo esta mostrando, ni se puede guardar, ni nada. Entonces vamos a agregarlo en el formulario:
+
+	-	Para agregarlo a formulario vamos a _form y agregamos en el formulario el campo del nombre:
+
+			<div class="field">
+				<%= f.label :name %><br>
+				<%= f.text_field :name %><br>
+				<%= f.label :date %><br>
+				<%= f.date_select :date, :start_year => Time.now.year - 1 ,:end_year => Time.now.year - 60 %>
+			</div>
+
+	-	En este punto aun no podemos agregarlo, de echo solo lo estamos agregando en el formulario, busquemos la manera de guardarlo en la base de datos. Para que se agregue, vamos al controlador del recurso: app -> controllers -> birthdays_controller. Agregamos el parametro permite de name, de tal manera que sea aceptado.
+
+		Antes estaba:
+
+			# Never trust parameters from the scary internet, only allow the white list through.
+			def birthday_params
+				params.require(:birthday).permit(:date)
+			end
+
+		Y ahora:
+
+			# Never trust parameters from the scary internet, only allow the white list through.
+			def birthday_params
+				params.require(:birthday).permit(:date,:name)
+			end
+
+	-	Con el paso anterior ya guardamos en la base de datos, pero no lo mostramos. Para mostrarlo debemos modificar, por ello modificaremos las vistas index y show:
+
+		Modificando el **index**:
+
+			<table>
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Name</th>
+						<th colspan="3"></th>
+					</tr>
+				</thead>
+
+				<tbody>
+				<% @birthdays.each do |birthday| %>
+					<tr>
+						<td><%= birthday.date %></td>
+						<td><%= birthday.name %></td>
+						<td><%= link_to 'Show', birthday %></td>
+						<td><%= link_to 'Edit', edit_birthday_path(birthday) %></td>
+						<td><%= link_to 'Destroy', birthday, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+					</tr>
+				<% end %>
+				</tbody>
+			</table>
+
+		Modificando el **show**:
+
+			<p>
+				<strong>Date:</strong>
+				<%= @birthday.date %>
+				<strong>Name:</strong>
+				<%= @birthday.name %>
+			</p>
+
+		Ahora ya guardamos y mostramos.
+
+3. Utilizar fullcalendar para mostrar los cumpleaños (**PENDIENTE**)

@@ -1,0 +1,101 @@
+#####Clase 56
+07-Nov-16
+#EJERCICIO REST
+
+Veremos una aplicación para generar Deudas y llevar un registro de cada Pago realizado. Cada Deuda tiene un Usuario (un deudor), puede tener una o muchas Categorías y tiene muchos Pagos asociados.
+
+##DESARROLLO BACKEND
+
+1.	USUARIOS
+
+	Debemos crear un scaffold para usuarios, donde el usuario debe tener los siguientes atributos:
+
+	-	Nombre
+	-	Correo Electrónico (Validar que el correo sea único)
+
+2.	DEUDAS Y CATEGORIAS
+
+	Una **deuda** tiene muchas **categorías**, y una **categoría** puede tener muchas **deudas**.
+
+	Debemos asociar categorías y deudas a través de una tabla llamada Classification.
+
+	Las **DEUDAS** deben tener los siguientes campos:
+
+	-	Descripción: Puede ser mayor a 255 carácteres.
+	-	Monto.
+	-	Estado: Pagado o Pendiente.
+	-	Usuario: Cada deuda tiene un usuario asignado.
+
+	Las **CATEGORIAS** deben tener el siguiente campo:
+
+	-	Nombre (Retail, Familia, Negocios, Ocio, Etc).
+
+3. PAGOS
+
+	Debemos crear el modelo pagos asociado a acada deuda. Una deuda puede tener muchos pagos (por si pagan por parte), y un pago solo puede estar asociado a UNA sola deuda. Cada pago debe tener:
+
+	-	Monto
+	-	Deuda
+
+##DESARROLLO CALLBACKS, METODOS Y VALIDACIONES
+
+1.	DEUDAS
+
+	-	Crear un metodo en el modelo (payed_amount) que responda al monto pagado. Para esto se debe sumar todos los pagos asociados a la deuda.
+
+	-	Crear un metodo en el modelo (pending_amount) qhue responda al monto por pagar. Restar el monto de la deuda con el monto creado anteriormente.
+
+	-	Con un callback, actualizar el estado de la deuda cada vez que se grabe. Si el monto pendiente es igual a cero poner en el estado "Pagado", si no lo es, el estado será "Pendiente".
+
+	-	Realizar una validacion personalizada para ver si el monto de los pagos excede el valor de la deuda. Si lo excede crear un error personalizado **errors.add** que diga "El pago excede el monto de la deuda". Así se evitan sobrepagos.
+
+2.	PAGOS
+
+	-	Crear un callback que después de borrar (after_destroy) actualice el estado de la deuda. Si el monto pendiente de la deuda es cero es cero que escriba "pagado" si no que escriba "pendiente". Luego grabar la deuda.
+
+3.	USUARIOS Y CATEGORIA
+
+	-	Crear una validacion que respectivamente verifique la presencia del nombre.
+
+##DESARROLLO FRONT END
+Index:
+Mostrar los siguientes campos en la deuda
+Descripción
+Monto
+Monto pagado
+Monto Pendiente
+Categorías
+Las categorías deben mostrarse separadas con comas
+Usuario (El nombre)
+Show:
+Mostrar los mismos campos anteriores
+Agregar un formulario usando rutas anidadas para crear pagos
+Anidar el recurso de deuda DENTRO del recurso de pago.
+Recordar el estilo form_for [@pago, deuda] de las clases
+anteriores.
+Listar los pagos realizados:
+Recordar como se acceden los objetos ( pago.deudas ), recorrer
+los pagos y mostrar cada uno de ellos
+Agregar un botón para borrar cada pago. Este botón sería un link
+que irá a la ruta deuda_pago con el método :delete .
+En las rutas, recordar limitar a dos métodos
+( :create, :destroy ) el anidado de pagos.
+El root del proyecto debe apuntar a debts#index
+Durante las próximas clases irémos haciendo crecer esta aplicación. Preocuparse de
+subirla a Github para continuar trabajando. Agregaremos:
+Registro de usuarios
+Vista para ver Deudas por categoría y usuarios.
+Una deuda podrá tener gastos de diferentes usuarios.
+Y más :)
+
+
+
+
+##NOTAS CLASES
+
+Lo primero que hacemos es crear un scaffold de user, con su nombre y su correo.
+
+Ahora para decimos que el correo es único.
+
+Para pago no se genera un scaffold sino, un modelo nada mas.
+
