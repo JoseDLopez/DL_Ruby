@@ -72,7 +72,7 @@ Los comentarios son asociados a los posts.
 
 		rake db:migrate
 
-4. Ahora anidaremos las rutas de los comentarios dentro de los posts, para esto vamos a **routes**, y le agregamos un bloque que indica que se esta anidando:
+4. Ahora anidaremos las rutas de los comentarios dentro de los posts, para esto vamos a **routes**, y le agregamos un bloque que indica que se esta anidando. Esto hace que se cree una ruta: posts/id_post/comments:
 
 		Rails.application.routes.draw do
 			resources :posts do
@@ -132,8 +132,8 @@ Los comentarios son asociados a los posts.
 				#get 'comments/index'
 
 				resources :posts do
-				resources :comments
-			end
+					resources :comments
+				end
 		end
 
 6. En este punto si entramos a la direccion de los posts, veremos cada uno, pero si queremos ver los comentarios de ese post accediento por el siguiente enlace, solamente veremos la vista por defecto de los comments:
@@ -162,7 +162,9 @@ Los comentarios son asociados a los posts.
 7. Pero, tambien queremos mostrar los comentarios de los posts, en el mismo posts, para ello vamos al show, y agregamos:
 
 		<p><strong>Último comentario:</strong>
-		<%= @comments.last.content %></p>
+		<% if @comments.last.nil? == false %>
+			<%= @comments.last.content %>
+			<% end %></p>
 
 
 		<%= link_to 'Todos los Comentarios', post_comments_path(@post) %>
@@ -177,24 +179,105 @@ Los comentarios son asociados a los posts.
 
     De esta manera, mostramos el ultimo comentario en la pagina del post, y podemos ver todos los comentarios haciendo click.
 
-Para anidar se pasa un bloque, y dentro de ese bloque, colocamos el elemento que queremos anidar. Y con eso se genera las siete rutas anidadas del recurso.
+8. Que sucede, pues que tambien queremos poder agregar comentarios en cada post. Para ello, usaremos algo que se llama **formularios anidados**, esto nos permite agregar un formulario anidado en un recurso mayor. Nos vamos a dirigir al show del post y agregaremos un formulario aqui. Este tambien ocupa rutas anidadas para redireccionar sus recursos. Entonces, en el show del post agregamos:
 
-IMPORTANTE SANITIZAR SIEMPRE
+		<h2>Agregar Comentario:</h2>
 
-Con el bloque, que se genera con el DO, se anida el recurso en otro. esto se hace en routes.rb.
+		Y ahora agregamos el formulario
 
-	resources :posts do
-		resources :comments
-	end
+		<%= form_for [@post, Comment.new] do |f| %>
+			<%= f.text_area :content %>
+			<%= f.submit "Enviar" %>
+		<% end %>
 
-Esto hace que se cree una ruta: posts/id_post/comments
+		Esto agrega un formulario, y entrega el primer parametro que es el post, ademas de la accion que es crear un comentario nuevo. donde f es el elemento constructor del formulario y va a tener los parametros de contenido y el metodo de enviar.
 
 
-Si quisieramos ver todos los comentarios del post utilizamos el post_comments GET, y esto va al controllador index del comments.
+9. El problema es que si nosotros decidimos enviar este comentario, vamos a tener un ERROR, ya que no existe un controlador que pueda hacerse cargo de esta informacion. Por lo cual tenemos que ir al controlador de los comentarios. Aca, nosotros agregamos el metodo de crear, para indicar que sucede ahi:
 
-Para anidar el formulario, nos vamos al show del post. y una ves que tenemos los recursos anidados podemos pasar esos recursos en el formulario anidado.
+		Creamos el create y entregamos los parametros del post y del comment, estos vienen sanitizados por un comment params donde solamente permite que se ingrese contenido.
 
-Con esto nos llevaria al create del comments.
+
+		def create
+			@post = Post.find(params[:post_id])
+			@post.comments.build(comment_params)
+			@post.save
+
+			redirect_to post_comments_path(@post)
+		end
+
+		private
+		def comment_params
+			params.require(:comment).permit(:content)
+		end
+
+		Debemos SANITIZAR es decir utilizar el private para evitar que nos inyecten datos. Es **MUY** importante SANITIZAR.
+
+10. Ahora haremos el método EDIT y el UPDATE de los comentarios. Para esto debemos modificar el show de los comentarios, y agregaremos un link de edit y este nos llevará a una actualizacion. Tambien agregaremos eliminar un comentario. Empezando por eliminar un comentario.
+
+		Nos aseguramos que primero exista una ruta creada para borrar. para ello vamos a nuestra ruta anidada y permitimos que se encuentren el delete y el edit:
+
+		resources :posts do
+	    	resources :comments, only: [:index, :create, :destroy]
+	  	end
+
+	  	Ahora vamos a crear el link en nuestra vista que nos direcciona a esa accion, esta link debe llevar el path o la ruta, que segun nuestro rake routes es post_comment_path(@post,c), se coloca el post y el comentario ya que son los parametros que nos piden. Tambien nos pide el metodo que estamos realizando que sería delete. y agregamos una confirmacion de borrado, no es obligatorio.
+
+		<p>Comentarios:</p>
+			<% @comments.each do |c| %>
+				<p> <%= c.content %> <%= link_to 'Delete', post_comment_path(@post,c), method: :delete, data: { confirm: 'Are you sure?' } %></p>
+		<% end %>
+
+		Una vez que tenemos listo nuestra ruta, procedemos a generar un metodo de destroy en nuestro controlador, por lo cual nos dirigimos al controlador del comentario y agregamos, lo siguiente que contiene el metodo llamado destroy, recoge la informacion del post y del comment segun su id, y procede a ejecutar la elimiacion, para luego redirigirnos a la vista que nos interesa.
+
+		def destroy
+			@post = Post.find(params[:post_id])
+			@comment = Comment.find(params[:id])
+
+			@comment.destroy
+
+			redirect_to post_comments_path(@post)
+		end
+
+		Bien, ahora si queremos hacer el EDIT hacemos lo siguiente, primero nos aseguramos que exista una ruta para edit y update:
+
+		resources :posts do
+			resources :comments, only: [:index, :create, :destroy, :edit, :update]
+		end
+
+		Luego de esto, creamos el link que nos permite ir a editar el comentario, es decir, trae la informacion de ese comentario y nos permite editarla, para ello tenemos una vista que se llama edit. Entonces en el index del post donde salen todos los comentarios mostramos el enlace a edit:
+
+		<p>Comentarios:</p>
+			<% @comments.each do |c| %>
+			<p> <%= c.content %> || <%= link_to 'Edit', edit_post_comment_path(@post,c), method: :get %> || <%= link_to 'Delete', post_comment_path(@post,c), method: :delete, data: { confirm: 'Are you sure?' } %></p>
+		<% end %>
+
+		Ahora que tenemos el link debemos indicar un metodo que nos diga que hacer con esto. entonces en el comment controller hacemos:
+
+		def edit
+			@post = Post.find(params[:post_id])
+			@comment = Comment.find(params[:id])
+		end
+
+		Y ademas en nuestra vista de edit agregamos el formulario que tomara la informacion existente, y ademas presentará un botón de enviar para poder procesar esa informacion. Que sucede, pues que al dar click en enviar nosotros debemos reaccionar a esto.
+
+		<h1>Editing Comment</h1>
+
+		<%= form_for [@post, @comment] do |f| %>
+			<%= f.text_area :content %>
+			<%= f.submit "Enviar" %>
+		<% end %>
+
+		El usuario al presionar enviar, activara nuestro metodo update, por lo cual debemos agregar en nuestro controlador de comentarios la acciona a realizar. Esto lo que hace es que toma el post, el comment, y dice que va a actualizar los atributos de este comment con los parametros que esta recibiendo y luego lo va a redirigir a los posts.
+
+		def update
+			@post = Post.find(params[:post_id])
+			@comment = Comment.find(params[:id])
+
+			@comment.update_attributes(comment_params)
+
+			redirect_to post_comments_path(@post)
+		end
 
 
 
