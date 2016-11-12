@@ -127,7 +127,8 @@ Los comentarios son asociados a los posts.
 			end
 		end
 
-	Pero como queremos limitar el acceso a los comments, por lo cual simplemente borraremos la ruta que se generó
+	Pero como queremos limitar el acceso a los comments, por lo cual simplemente borraremos la ruta que se generó:
+	
 		Rails.application.routes.draw do
 				#get 'comments/index'
 
@@ -281,12 +282,11 @@ Los comentarios son asociados a los posts.
 
 
 
-
-Ejercicio en clases
+#Ejercicio en clases
 
 1. Crear proyecto nuevo
 
-		rails new salon
+		rails new course_exercise
 
 2. Este proyecto tiene grupos, personas y apuntes (3 niveles de anidamiento)
 
@@ -314,3 +314,16 @@ Ejercicio en clases
 		end
 
 
+3. Creamos los seeds para tener algo creado en el proyecto. Ejemplo:
+
+		Note.destroy_all
+		User.destroy_all
+		Group.destroy_all
+
+		Group.create(name:'Bebés')
+
+		Group.find_by(name:'Bebés').users.build(name:'Pedro').save
+
+		User.find_by(name:'Pedro').notes.build(content:'Nota 1 de Pedro').save
+
+		
