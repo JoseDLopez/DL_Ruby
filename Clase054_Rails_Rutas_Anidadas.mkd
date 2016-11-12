@@ -326,4 +326,26 @@ Los comentarios son asociados a los posts.
 
 		User.find_by(name:'Pedro').notes.build(content:'Nota 1 de Pedro').save
 
-		
+4.	Despues de hacer todo el REST con Groups and User, anidaremos la ruta de las notes.
+
+	Para esto iremos a rutas y anidaremos el resource notes
+
+		resources :groups do
+			resources :users, only: [:index, :create, :edit, :update, :destroy] do
+				resources :notes, only: [:index]
+			end
+		end
+
+	Nos seguramos que se haya creado la ruta en el rake routes:
+
+		Prefix Verb   			URI Pattern                                      Controller#Action
+		group_user_notes GET    /groups/:group_id/users/:user_id/notes(.:format) notes#index
+
+	Efectivamente se creo la ruta.
+
+5.	Veamos que sucede si tratamos de acceder a esta ruta:
+
+
+6.	Cualquier duda revisar el ejercicio course, que tiene 3 rutas anidadas.
+
+FIN
