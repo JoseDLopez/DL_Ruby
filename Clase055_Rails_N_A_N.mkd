@@ -2,46 +2,363 @@
 04-Nov-16
 #RELACIONES N a N
 
-Lo que haremos sera crear un proyecto y luego crear DOS SCAFFOLD
+Tenemos una relacion N a N cuando el elemento de una tabla esta relacionado con muchos elementos de otra tabla y viceversa.
 
-Por que? Porque queremos agregar mulitples tags a multiples peliculas es decir relacion n a n
+Un ejemplo clasico es la relacion de Peliculas y TAGs. Una pelicula puede tener muchos tags y un tag puede tener muchas peliculas.
 
-	rails new cartelera
+Sucede que es imposible en una base de datos hacer una relacion mucho a mucho solamente usando dos tablas, porque esto implicaria que exitira una clave principa y una clave foranea en las dos tablas y relacionadas a si mismas. 
 
-	rails g scaffold Movie name:string
+La solucón a esto es una **tercera tabla**, esta hara la relacion entre peliculas y tags conteniendo el id de cada una.
 
-	rails g scaffold Tag name:string
+Nuestro diagrama pasaria de ser:
 
-Migramos
+		Peliculas <-------> Tags
 
-	rake db:migrate
+a:
 
-La estrategia es colocar una tabla intermedia donde se coloquen los dos primary key que se relacionan.
+		Peliculas -----> pelicula_tag <------ Tags
 
-Entonces existen dos maneras
-3 tablas y 3 modelos
+Rails trata esta situacion de dos maneras, con o sin modelo para esta tercera tabla, es decir:
 
-3 tablas y 2 modelos.
+1.	3 Tablas - 2 Modelos:
 
-Probando con 3 tablas y 2 modelos:
+	En este caso, donde sólo se usan dos modelos, se ocupa la relacion, que va en ambos modelos que se estan relacionando
 
-Para esto creamos una tabla intermedia.
+		has_and_belongs_to_many
 
-	rails g migration CreateJoinTableMovieTag movies tags
+2.	3 Tablas - 3 Modelos:
 
-luego corremos la migracion
+	Para cuando se crean los 3 modelos se ocupan:
+
+		has_many :through
+
+
+#DESARROLLO DE EJERCICIO
+
+###UTILIZANDO EL METODO 3 TABAS 2 MODELOS (3T2M)
+
+1.	Crearemos el proyecto que llamaremos movies, con sus respectivos modelos:
+
+		rails new movies_exercise
+
+	En este caso los modelos van con SCAFFOLD.
+
+		rails g scaffold Movie name:string
+		rails g scaffold Tag name:string
+
+	Corremos migracion
+
+		rake db:migrate
+
+2.	Ahora que hacemos con la tercera tabla, como la creamos? y como hacemos las relaciones?
+
+	Tenemos que crear la tabla de JOIN, que es la tabla intermedia y esta contendra el id de la pelicula y el id de la etiqueta.
+
+		rails g migration CreateJoinTableMoviesTag movies tags
+
+	Corremos la migracion
+
+		rake db:migrate
+
+3.	Debemos hacer la relacion de las tablas movies y tags en sus modelos, por lo cual en cada una ingresaremos:
+
+	Modelo de Movies:
+
+		class Movie < ApplicationRecord
+			has_and_belongs_to_many :tags
+		end
+
+	Modelo de Tags:
+
+		class Tag < ApplicationRecord
+			has_and_belongs_to_many :movies
+		end
+
+4.	En este punto ya tenemos la relacion N - N entre las 3 tablas y solo usando 2 modelos, es decir si nosotros creamos peliculas, creamos tags y los unimos es posible realizar consultas. Ejemplo:
+
+	Creando Peliculas y Tags:
+
+		tag1 = Tag.create(name:'Accion')
+		tag2 = Tag.create(name:'Suspenso')
+		tag3 = Tag.create(name:'Fantasia')
+		tag4 = Tag.create(name:'Kids')
+
+		pelicula1 = Movie.create(name:'Terminator I')
+		pelicula2 = Movie.create(name:'Terminator II')
+		pelicula3 = Movie.create(name:'Terminator III')
+
+	De la siguiente manera le "empujamos" a la pelicula tags
+
+		pelicula1.tags << tag1
+		pelicula1.tags << tag2
+
+		pelicula2.tags << tag1
+		pelicula2.tags << tag2
+
+		pelicula3.tags << tag1
+		pelicula3.tags << tag2
+
+	Haremos lo mismo con las siguientes peliculas
+
+		pelicula1 = Movie.create(name:'Harry Potter I')
+		pelicula2 = Movie.create(name:'Harry Potter II')
+		pelicula3 = Movie.create(name:'Harry Potter III')
+
+		pelicula1.tags << tag3
+		pelicula1.tags << tag2
+		pelicula1.tags << tag4
+
+		pelicula2.tags << tag3
+		pelicula2.tags << tag2
+		pelicula2.tags << tag4
+
+		pelicula3.tags << tag3
+		pelicula3.tags << tag2
+		pelicula3.tags << tag4
+
+		pelicula1 = Movie.create(name:'ToyStory I')
+		pelicula2 = Movie.create(name:'ToyStory II')
+		pelicula3 = Movie.create(name:'ToyStory III')
+
+		pelicula1.tags << tag3
+		pelicula1.tags << tag4
+
+		pelicula2.tags << tag3
+		pelicula2.tags << tag4
+
+		pelicula3.tags << tag3
+		pelicula3.tags << tag4
+
+5.	Ya con las relaciones hechas y con peliculas y tags creados podemos hacer consultas del estilo:
+
+	Queremos saber cuales peliculas tienen la etiqueta de Accion y las de Kids
+
+		Tag.first.movies
+		Tag.last.movies
+
+	Queremos saber cuales son las etiquetas que tiene la ultima pelicula:
+
+		Movie.last.tags
+
+
+6.	Listo, con esto se culmina la relacion N a N usando 3 Tablas y 2 Modelos.
+
+
+###UTILIZANDO EL METODO 3 TABAS 3 MODELOS (3T3M)
+
+1.	Crearemos el proyecto que llamaremos movies, con sus respectivos modelos:
+
+		rails new movies_exercise_3T3M
+
+	En este caso los modelos van con SCAFFOLD.
+
+		rails g scaffold Movie name:string
+		rails g scaffold Tag name:string
+
+	Corremos migracion
+
+		rake db:migrate
+
+
+2.	Ahora que hacemos con la tercera tabla, como la creamos? y como hacemos las relaciones?
+
+	En este caso como si crearemos un 3er modelo, vamos a crear el modelo que se llame movies tags:
+
+		rails g model MovieTag movie:references tag:references
+
+	Se nos genera el modelo y vamos a revisar las migraciones y las relaciones en el modelo:
+
+		class MovieTag < ApplicationRecord
+			belongs_to :movie
+			belongs_to :tag
+		end
+
+	Si bien en el modelo de movie_tag las relaciones se hicieron automaticas, nosotros debemos ir a los modelos movie y tag respectivamente a hacer las relaciones:
+
+	Modelo Movie:
+
+		class Movie < ApplicationRecord
+			has_many :movie_tags
+			has_many :tags, through: :movie_tags
+		end
+
+	Modelo Tag:
+
+		class Tag < ApplicationRecord
+			has_many :movie_tags
+			has_many :movies, through: :movie_tags
+		end
+
+
+3.	Con esto ya tenemos las relaciones hechas, y podemos repetir los pasos siguientes con el ejemplo anterior.
+
+
+##VALIDACION DE INSCERCIONES UNICAS
+
+Es posible validar que el dato que estamos agregando en nuestra base de datos es único, por ejemplo, validamos que el email sea único:
+
+		validates :email, uniqueness: true
+
+	Esto se coloca en el modelo del recurso.
+
+En nuestro caso si queremos hacer eso con los tags, vamos al modelo de tags y agregamos:
+
+		class Tag < ApplicationRecord
+			has_many :movie_tags
+			has_many :movies, through: :movie_tags
+
+			validates :name, uniqueness: true
+		end
+
+
+Efectivamente al crear una categoria con ese nombre, nos devolverá un error.
+
+##BORRANDO TAG o MOVIE y a su vez la relación.
+
+Cada vez que borramos un tag o un movie, no tiene sentido que se borre la el otro recurso al que se relaciona. Pero si es necesario que en la tabla JOIN se borre la relación. Para ello debemos indicar que se borre la relación primero y luego el recurso.
+
+Tenemos 3 Escenarios:
+
+1.	Queremos borrar una pelicula.
+
+	Cuando queremos borrar una pelicula, debemos tambien borrar la relacion que tiene la pelicula con los tags, por ello debemos agregar en el modelo de destroy lo siguiente:
+
+	Este procedimiento buscara en la tabla join la relacion y la eliminará:
+
+		def destroy
+			@movie.tags.destroy_all
+			@movie.destroy
+		end
+
+2.	Queremos borrar un tag
+
+	Es el mismo caso pero en el controler del Tag:
+
+		def destroy
+			@tag.movies.destroy_all
+			@tag.destroy
+		end
+
+
+3.	Queremos borrar la relacion de una pelicula y de un tag, pero no queremos eliminar ni la pelicula ni el tag.
 	
-	rake db:migrate
+	En este caso basta con el borrar la relacion si necesariamente borrar el recurso, seria segun aplique:
 
-Ahora debemos agregar en cada una movie y tag el has and velongs to many
+		@movie.tags.destroy_all
 
-	has_and_belongs_to_many :movies
-	has_and_belongs_to_many :tags
+	Ó
 
-
-Repetir los pasos vistos anteriormente ahora en un nuevo código que tiene.
-Proyectos y personas, una persona tiene muchos proyectos, en un proyecto hay muchas personas.
-Apuntar root a project#index
+		@tag.movies.destroy_all
 
 
+##MOSTRAR INDEX DE PELICULAS CON TAGS
 
+1.	Queremos mostrar las peliculas con sus respectivos tags, para ello en nuestro index de las peliculas haremos:
+
+	Vamos al index de las peliculas y de manera sencilla agregamos:
+
+		<td>
+			<% movie.tags.each do |t| %>
+				<%= t.name %>
+			<% end %>
+		</td>
+
+	Pero de manera que se vea mas profesional podemos usar el siguiente metodo: UN COLLECT:
+
+		<td> <%= movie.tags.collect(&:name),join(" / ") %> </td>
+
+	El problema es que para cada uno debemos agregar la accion de agregar un boton para desvincular los tags. Entonces regresamos a la manera anterior y agregamos:
+
+        <td>
+          <% movie.tags.each do |t| %>
+            <%= t.name %> <strong>|X|</strong>
+          <% end %>
+        </td>
+
+2.	Queremos mostrar en nuestro formulario de peliculas la oportunidad de que agreguen tags.
+
+		<div class="field">
+			<%= f.label :tag_name %>
+			<%= f.select(:tag_ids,Tag.all.map{|t| [t.name, t.id]}, {}, { :multiple => true, :size => 5}) %>
+		</div>
+
+3.	El problema es que si hacemos submit, el parametro de tag_ids no esta pasando ya que no esta permitido. Por lo cual debemos modificar el sanitizador para que permita el tag_ids:
+
+		def movie_params
+			params.require(:movie).permit(:name, :tags_ids => [])
+		end
+
+		Como es un array o un hash debemos mostrarlo como hicimos arriba, sino se hace sin el ** => [] **
+
+4. Ahora si queremos proceder a guardarlo, para ello vamos al metodo de create movie:
+
+		def create
+			tags_ids = movie_params["tags_ids"].delete_if{ |x| x.empty? }
+			@tags = Tag.find(tags_ids)
+			@movie = Movie.new(movie_params)
+			@movie.tags << @tags
+		end
+
+5. Listo, ahora cada vez que creamos una pelicula se guarda la relacion con los tags. Vamos a mostrar los tags tambien cuando vemos el detalle de la pelicula es decir en su show. Vamos a la vista show y agregamos:
+
+		<ul>
+		  <% @movie.tags.each do |t| %>
+		   <li><%= t.name %></li>
+		  <% end %>
+		</ul>
+
+6. Ahora guardemos el cambio de los tags cuando hacemos un edit:
+
+	Para esto vamos al metodo de udpate de las peliculas y agregamos:
+
+		def update
+			@movie.update(movie_params)
+			tags_ids = movie_params["tags_ids"].delete_if{ |x| x.empty? }
+			@tags = Tag.find(tags_ids)
+			@movie.tags.destroy_all
+				@tags.each do |t|
+					if @movie.tags.exists?(t) == false
+						@movie.tags << t
+					end
+				end
+			@movie = Movie.new(movie_params)
+			@movie.tags << @tags
+		end
+
+7.	Queremos que cada vez que se presione la X se elimine la relacion entre las peliculas y los tags:
+
+	Vamos a las rutas de las peliculas y le agregamos la ruta para esta edicion:
+
+		Rails.application.routes.draw do
+			resources :tags
+			resources :movies do
+				member do
+					get 'delete_tag/:tag_id', to: 'movies#delete_tag', as: 'delete_tag'
+				end
+			end
+			# For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+		end
+
+	Esto nos crea la siguiente ruta:
+
+		Prefix Verb   			URI Pattern                              Controller#Action
+		delete_tag_movie GET    /movies/:id/delete_tag/:tag_id(.:format) movies#delete_tag
+
+	Ahora vamos al index que es donde se esta mostrando el eliminar y pasamos el enlace con los parametros que se necesitan para el metodo:
+
+		<td>
+			<% movie.tags.each do |t| %>
+				<%= t.name %> <strong><%= link_to 'X', delete_tag_movie_path(movie, tag_id: t.id), data: { confirm: 'Are you sure?' } %></strong>
+			<% end %>
+		</td>
+
+	Ya dentro del controlador de las peliculas haremos lo siguiente:
+
+		def delete_tag
+			@movie = Movie.find(params[:id])
+			tag = Tag.find(params[:tag_id])
+			@movie.tags.delete(tag)
+			redirect_to movies_path, notice: "Tag borrado de la película #{@movie.name}"
+		end
+
+####EJERCICIO FINALIZADO 
