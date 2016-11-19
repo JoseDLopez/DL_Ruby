@@ -1,0 +1,86 @@
+CAN CAN CAN 
+11-Nov-16
+
+Gema de autenticacion.
+
+Existe otro concepto que es de autorizacion, que tiene que ver con que permisos tiene cada usuario para cada cosa.
+
+Es la gema mas popular y las mas popular, y la otra gema es pundit.
+
+Una cosa es autenticacion y otra es autorizacion.
+
+Autenticacion: Login
+
+Autorizacion: se encarga del control de acceso.
+
+En la clase anterior utilizamos un callback para comprobar los accesos.
+
+Lo primero que hacemos es agregar una gema
+
+		gem 'cancancan'
+
+hacemos el bundle y reiniciamos el server.
+
+CANCANCAN depende de 4 pilares fundamentales.
+
+Habilidades -> trata sobre las habilitaciones que tienen los usuarios para acceder a ciertos espacios o no.
+
+El árbol de habilidades o habilitaciones es un **modelo**, en este inicializamos en donde se especifica que metodos puede usar un usuario depende de su tipo.
+
+Revision de habilidades -> Es permite mostrar cosas o imagenes para un usuario segun sus privilegios. Esto se hace en las vistas.
+
+Bloqueo -> Esto permite bloquear y cargar un recurso pero preguntando si un usuario puede hacer uso de este recurso.
+
+Manejo de conexiones no autorizadas -> Consiste en que cada vez que tratemos de acceder a un recurso al que no tenemos permiso, 
+
+
+
+
+Para hacer el ejercicio primero creamos el proyecto:
+
+		rails new blog_exercise --database=postgresql
+
+Ahora instalamos devise y cancancan agregando en el archivo gemfile:
+
+		gem 'devise'
+		gem 'cancancan', '~> 1.10'
+
+Y ahora hacemos el bundle.
+
+Ahora para devise debemos correr el generador que es:
+
+		rails generate devise:install
+
+Seguimos las instrucciones de la gema por lo cual agregamos una ruta al routes.db y ademas agregamos unos mensajes de alerta de error en el application layout.
+
+Ahora lo que hacemos es crear el modelo del usuario. Pero antes de esto debemos inicializar la base de datos y verificar la conexion.
+
+		sudo service postgresql start
+
+Haremos el rake:db setup pero tendremos problemas asi que agregamos el template0 en nuestro database.yml
+
+		template: template0
+
+Corremos de nuevo el setup y hacemos la migracion:
+
+		rake db:setup
+		rake db:migrate
+
+Ahora si podemos crear el usuario a traves de DEVISE
+
+		rails g devise User
+
+Y hacemos una migracion.
+
+		rake db:migrate
+
+
+Listo, despues de la migracion hacemos todo el REST. 
+
+Una vez que tenemos el REST listo. seguimos trabajando con la autenticacion.
+
+Lo que haremos es que agregaremos en nuestro application controller lo siguiente:
+
+		before_action :authenticate_user!
+
+Esto nos valida que para cualquier controlador el usuario deba estar registrado

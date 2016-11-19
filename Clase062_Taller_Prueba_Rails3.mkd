@@ -1,0 +1,237 @@
+15-Nov-16
+#TALLER RAILS TERCERA PRUEBA
+
+###PREPARACION JUEGO POKEMON
+
+1.	Construir el scaffold de POKEMON con el nombre y descripción.
+
+	Creamos el scaffold con el comando:
+
+		rails g scaffold Pokemon name:string description:text
+
+	Corremos las migraciones:
+
+		rake db:migrate
+
+2.	Leer los datos del seed y guardarlos en la tabla. (Hacer Commit)
+
+	Editamos el seed y cargamos los datos del seed con:
+
+		rake db:seed
+
+3.	Construir el modelo Usuario con Devise y agregar rol al usuario:
+
+	Para construir el modelo usuario debemos agregar devise a nuestro gemfile y luego correr bundle:
+
+		gem 'devise'
+
+		bundle
+
+	Luego debemos ejecutar el generador con el comando:
+
+		rails generate devise:install
+
+	Debemos asegurarnos de que en produccion tenemos una ruta correcta para el devise, luego nos debemos asegurar que existe una ruta home en nuestro routes file. En nuestro caso pusimos:
+
+		root to: "pokemons#index"
+
+	Tambien debemos asegurarnos que tenemos flash mensajes, que son los mensajes informativos de la aplicacion, y efectivamente en nuestro index tenemos:
+
+		<p id="notice"><%= notice %></p>
+
+	Por último nos indica que podemos correr un comando para tener disponible las vistas del devise si las queremos editar, como es asi. Correremos:
+
+		rails g devise:views
+
+	Ya tenemos el devise funcional, ahora debemos agregar el modelo Usuario
+
+		rails g devise User
+
+	Vemos las migraciones y nos damos cuenta que le agrega correo y password. Siendo asi, las corremos:
+
+		rake db:migrate
+
+	Tambien nos piden agregar rol al usuario, es decir una columna que especifique su rol, para ello correremos:
+
+		rails g migration addRoleToUser role:string
+
+	Verificamos nuevamente la migracion para ver que todo esta bien, y luego corremos el:
+
+		rake db:migrate
+
+4.	Construir el Modelo de Pokemon
+
+	Un usuario puede tener muchos pokemons a traves de una tabla intermedia llamada Atrapados esta tabla tiene el nivel del pokemon. Crear el modelo y agregar las relaciones:
+
+		rails g model UserPokemon user:refrences tag:references level:integer
+
+	Revisamos las migraciones y corremos el rake db:migrate. Aunque para el modelo user_pokemons se agrega automaticamente las relaciones debemos agregarlas manualmente en user y en pokemon:
+
+	Para User:
+
+		class User < ApplicationRecord
+			has_many :user_pokemons
+			has_many :pokemons, through: :user_pokemons
+		end
+
+	Para Pokemon:
+
+		class Pokemon < ApplicationRecord
+			has_many :user_pokemons
+		    has_many :users, through: :user_pokemons
+		end
+
+	Nos estan solicitando realizar el diagrama de relaciones y para ello usaremos el railroady. Agregamos en nuestro GEMFILE:
+
+		gem 'railroady'
+
+		bundle
+
+	Finalmente para generar el diagrama hacemos:
+
+		rake diagram:all
+
+5. Agregar Bootstrap
+
+	Debemos agregar un CDN de bootstrap y un tema de Bootswatch. Para agregar el bootsrap basta con ir a nuestro layout application y agregar en el header:
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	Ahora para agregar el tema comentamos las lineas anteriores de tema y agregamos en nuestros assets el archivo nuevo que llamarelos bootstrap_simple. Y luego lo agregamos en el manifiesto:
+
+		 *= require bootstrap_simple.css
+		 *= require_tree .
+		 *= require_self
+		 */
+
+	Para agregar el navbar creamos un archivo que se llame **_navbar** y lo pegaremos en nuestro layout, luego lo que hacemos es pegar esto en nuestro application.html.erb:
+
+		<body>
+			<%= render 'layouts/navbar' %>
+			<%= yield %>
+		</body>
+
+	Con esto se dibuja el navbar en todos lados.
+
+6.	El usuario al entrar debe ver un landing del sitio. Dentro de la barra de navegacion se debe poder registrar y si el usuario esta registrado debe estar el link para cerrar sesion. 
+
+	Para ello creamos un archivo que se llame landing.html.erb con lo que queremos mostrar. Y dentro de nuestro archivo de rutas creamos:
+
+		root to: "pokemons#landing"
+
+	De tal manera que si alguien va a la ruta por defecto, nos redirigue al landing.
+
+	Ahora vamos a asegurarnos de que el usuario si no esta registrado te lleve directamente al landing y te de la posibilidad de registrarte a traves de la barra de navegacion. Entonces como queremos validar que el usuario esta registrado siempre, pues agregamos en nuestro application controller:
+
+		before_action :authenticate_user!
+
+	El porblema es que esto nos lleva directamente a la pagina para logearnos y nunca vemos el landing. Entonces la solucion es colocar en nuestro pokemon controller la siguiente linea que dice que se salte la autenticacion de usuario, menos para el landing:
+
+		skip_before_action :authenticate_user!, only: [:landing]
+
+	Como queremos que sea posible registrarse o hacer login desde la barra de navegacion. Agregamos en la barra lo siguiente:
+
+		<ul class="nav navbar-nav navbar-right">
+			<% if user_signed_in? %>
+				<li><a href="<%= destroy_user_session_path %>" data-method = 'delete'>Finalizar Sesión</a></li>
+			<% else %>
+				<li><a href="<%= new_user_session_path %>">Login</a></li>
+				<li><a href="<%= new_user_registration_path %>">Registro</a></li>
+			<% end %>
+		</ul>
+
+7.	Al registrarse, el usuario deberia poder ingresar su nombre:
+
+	Para esto debemos modificar nuestro formulario agregando el campo nombre y a la vez agregar la migracion del nuevo campo en la tabla del usuario:
+
+		rails g migration addNameToUser name:string
+
+	Revisamos la migración y hacemos:
+
+		rake db:migrate
+
+	Ahora debemos editar el formulario, para ello vamos al new user registration y agregamos:
+
+		<div class="field">
+			<%= f.label :name %><br />
+			<%= f.email_field :name, autofocus: true %>
+		</div>
+
+	Y si, funcionó se registra el usuario **PERO** no se esta guardando el nombre, debemos permitir que este dato pase. Entonces iremos a los controladores del devise, pero RESULTA que no los hemos generado para podificarlos. Para poder generarlos ejecutamos:
+
+		rails g devise:controllers users
+
+	Donde users es la ruta donde lo queremos guardar. Con esto se generan los controladores y podemos editar para sanitizar. Entonces en la ruta: app -> controllers -> users -> registration, agregamos:
+
+		class Users::RegistrationsController < Devise::RegistrationsController
+			before_action :configure_sign_up_params, only: [:create]
+
+
+			#If you have extra params to permit, append them to the sanitizer.
+			def configure_sign_up_params
+			devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+			end
+
+
+			#The path used after sign up.
+			def after_sign_up_path_for(resource)
+			# super(resource)
+			'/pokemons'
+			end
+
+		end
+
+	De esa manera nos aseguramos que antes de crear, permita que pase el nombre, y despues de hacer sign up nos lleve al path pokemons. 
+
+	Que pasa, que sigue sin funcionar porque debemos indicarle al DEVISE que use este nuevo controlador editado. para eso vamos a las rutas y decimos:
+
+		Rails.application.routes.draw do
+			devise_for :users, controllers: {registrations:"users/registrations"}
+			root to: "pokemons#landing"
+			resources :pokemons
+
+			# For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+		end
+
+	**PERFECTO** Ahora si se agregan los usuarios
+
+8.	Al hacer login, el usuario debe ser redirigido a la pagina pokemones:
+
+	PAra ello debemos agregar en nuestro application controller lo siguiente, que hace que despues del login nos redireccione:
+
+		class ApplicationController < ActionController::Base
+			before_action :authenticate_user!
+			protect_from_forgery with: :exception
+
+			def after_sign_in_path_for(users)
+				pokemons_path
+			end
+
+			def after_log_out_path_for(users)
+				redireccioneoot_path
+			end
+		end
+
+9.	Dentro de ATRAPADOS deben estar todos los pokemones que nosotros tenemos, pero NO los de otros usuarios. Cada pokemon debe aparecer junto a su nivel.
+
+	Entonces creamos la vista de atrapados, con un controlador que se llame atrapados.
+
+		rails g controller catched index
+
+	Ahora queremos que en nuestro navbar se vea eso cuando estamos logeados, entonces hacemos en el navbar:
+
+		<ul class="nav navbar-nav">
+			<% if user_signed_in? %>
+				<li><a href="<%= pokemons_path %>">Todos Los Pokemones</a></li>
+				<li><a href="<%= catched_index_path %>">Tus Pokemones</a></li>
+			<% end %>
+		</ul>
+
+	Pero tambien debemos mostrar los pokemones de ese usuario en esa tabla, entonces en el index hacemos:

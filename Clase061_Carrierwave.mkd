@@ -1,0 +1,115 @@
+14-Nov-16
+#Carrierwave
+
+Existen dos gemas populares para subir archivos, paperclip y carrierwave.
+
+Las dos cumplen las mismas funciones.
+
+Carrierwave agrega un uploader sobre un campo,este uploader es un getter y un setter que permite guardar un archivo y obetner la url al archivo.
+
+Para Instalar se agrega en el gemfile:
+
+		gem 'carrierwave'
+
+Este debe ser agregado justo despues de la gema rails
+
+		gem 'rails', '4.2.5'
+
+Si no se agrega de esa manera puede acarrear problemas.
+
+Despues procedemos a generar un archivo conocido como **uploader**:
+
+		rails generate uploader Photo
+
+El nombre del Uploader no tiene ninguna relacion con el nombre del campo en la base de datos
+
+Un uploader permite configurar muchas cosas, como por ejemplo el storage file, y el nombre del lugar donde se va a guardar.
+
+Ahora relizaremos el siguiente ejercicio:
+
+##EXERCISE 1:
+
+-	Crear un scaffold de posts con titulo y contenido (title:string, content:text)
+
+	-	Antes creamos el proyecto:
+
+			rails new exercise_one_photo_article
+
+	-	Ahora procedemos a crear el scaffold:
+
+			rails g scaffold Post title:string content:text
+
+	-	Corremos las migraciones:
+
+			rake db:migrate
+
+	-	Ahora no hay problema y se encuentra totalmente funcional el recurso POST
+
+-	Crear el uploader
+
+	-	Para crear el uploader debemos correr agregar la lina que indica que usaremos esa gema **JUSTO** debajo de la gema de rails en el archivo GEMFILE.
+
+			gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+			gem 'carrierwave'
+
+	-	Ahora hacemos el BUNDLE y debería quedar instalada.
+
+	-	Lo siguiente que se hace es generar el **UPLOADER** que en nuestro caso lo llamaremos PHOTO
+
+			rails g uploader Photo
+
+
+-	Añadir una migracion para guardar una imagen de un post (photo:string)
+
+	-	Ahora que tenemos un uploader creado llamado foto, vamos a agregar el campo Photo a nuestro Post, para que de esa manera se pueda almacenar una foto por cada post.
+
+			rails g migration addPhotoToPost photo:string
+			rake db:migrate
+
+		El uploader lo que hace es interpretar ese string.
+
+	-	Debemos ir al modelo e indicarle que el mount es de una photo. Entonces abrimos el modelo de Post y agregamos:
+
+			class Post < ApplicationRecord
+				mount_uploader :photo, PhotoUploader
+			end
+
+		Donde photo es el campo que agregamos, y **PhotoUploader** es el uploader que creamos.
+
+-	Agregar el campo al fomrulario para subir la foto del post
+
+	-	Nosotros queremos agregar la foto desde un formulario, por lo cual debemos agregar en el form el campo, el problema es que para que un formulario pueda enviar archivos, este debe ser **multiparte**. Cualquier formulario se puede convertir a multiparte usando:
+
+			html: {:multipart => true}
+
+	-	Ejemplo:
+
+			form_for @post, html: {:multipart => true} do |f|
+
+	-	Entonces dentro del formulario podriamos hacer:
+
+			f.file :photo
+
+	-	Finalmente en nuestro formulario agregamos:
+
+	
+
+
+-	Agregar los strong params a la foto
+-	Crear una version de las fotos 50% mas pequeña
+-	En el index de los posts mostrar las fotos pequeñas
+
+
+
+
+
+
+
+##EXERCISE 2:
+
+-	Crear un scaffold de posts con titulo y contenido
+-	Crear un modelo de fotos con el campo photo, y el campo main:boolean y el post como referencia (no crear el scaffold porque ser una ruta anidada)
+-	Agregar el uploader al campo photo
+-	Crear un formulario para subir fotos a los articulos (utilizar la ruta anidada)
+-	Poder borrar las fotos subidas.
+
