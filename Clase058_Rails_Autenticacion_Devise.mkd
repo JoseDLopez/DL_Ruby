@@ -1,0 +1,258 @@
+#DEVISE AUTENTICACION
+Clase 58
+
+La autenticación es el proceso de validación de un usuario en un sistema, esta puede ser programada desde cero, pero existen gemas que facilitan la implementacion de esta solución.
+
+En Ruby, el mas famoso es DEVISE. Este nos brinda ventajas como:
+
+	-	Soporte autenticacion en diferentes modelos.
+	-	Es seguro, encripta claves automaticamente, no guarda claves en texto plano.
+	-	Incorpora herramientas para validacion de email (módulo confirmable).
+	-	Es combinable con otras soluciones como Login con FB, Twitter, Linkedin, y todo lo que soporte OAUTH.
+	-	Tiempos de sesión configurables.
+
+Crearemos un proyecto nuevo solo para probar como funciona el devise:
+
+		rails new learning_devise
+
+Crearemos un scaffold de canciones para que podamos tener un contenido que mostrar
+
+		rails g scaffold Song name:string duration:integer
+
+		rake db:migrate
+
+Ahora si procederemos a implementar DEVISE, los pasos serian:
+
+1.	Agregamos la gema DEVISE en nuestro gemfile:
+
+		gem 'devise'
+
+		bundle
+
+2.	Correremos el generador de DEVISE
+
+		rails g devise:install
+
+	Esto nos devuelve una serie de instrucciones:
+
+		-	Primera: Asegurarnos que tenemos definida una URL por defecto en nuestro enviroment. Que debe ser configurado en config/environments/development.rb.
+
+			Para ello vamos a nuestro archivo de development y nos aseguramos de crear la ruta, esta ruta lo que indica es la direccion del servidor de mailing:
+
+				config.action_mailer.default_url_options = { host: ‘localhost’,port: 3000 }
+
+		-	Segundo: Debe existir una pagina web por defecto para nuestro root, en nuestro caso tenemos:
+
+				root to: "songs#index"
+
+		-	Tercero: Tener mensajes noticia en nuestro application layout para mostrar lo que esta sucediendo a los usuarios. Por ello en nuestro layout tenemos:
+
+				<%= notice %>
+				<%= alert %>
+
+		-	Cuarto: Es una configuración para rails 3.2
+
+		-	Quinto: Nos indica que podemos generar las vistas para modificarlas. Hagamoslo para que podamos manipularalas a antojo:
+
+				rails g devise:views
+
+3.	En este punto ya tenemos nuestras vista de devise, pero no la hemos asociado a algun modelo, para aprovechar el ejemplo de nuestro proyecto lo haremos creando un modelo que se llame Employee. Entonces ejecutamos:
+
+		rails g devise Employee
+
+	Esto nos genera un Modelo llamado empleado y ademas nos crea la migracion con los datos necesarios, como email y password. Entonces correremos las migraciones:
+
+		rake db:migrate
+
+	Genial, ya tenemos las rutas creadas, las vistas, el modelo. Pero aun deja que todo el mundo acceda a todos lados sin estar logeado.
+
+4.	Se supone que existen tres rutas basicas que manejaremos siempre: inicio de sesion, registro de usuario y finalizacion de sesion. Esto se hace redirigiendo al usuario con estos links:
+
+		<%= link_to "Ingresar", new_user_session_path %>
+		<%= link_to "Registrar", new_user_registration_path %>
+		<%= link_to "Salir", destroy_user_session_path, method: :delete %>
+
+	Si lo queremos colocar en un enlace en html seria:
+
+		<a href="<%= destroy_user_session_path %>" data-method="delete">
+			Salir
+		</a>
+
+5.	Existe un metodo en rails que nos ayuda a saber si un usuario se encuentra logeado, este se llama user_signed_in, y se usa de tal manera que si el usuario no se encuentra loggeado muestre el link de ingresar o registar, y si esta logeado muestre el link de salir.
+
+		<% if user_signed_in? %>
+			<%= link_to "Salir", destroy_user_session_path, method: :delete %>
+		<% else %>
+			<%= link_to "Ingresar", new_user_registration_path %>
+			<%= link_to "Registrar", new_user_registration_path %>
+		<% end %>
+
+6.	Existe un hash que se llama current_user este nos permite saber que usuario se ha loggeado, esto nos da un sin fin de posibilidades, ya que podemos conocer todas las propiedades del usuario loggeado, ejemplo:
+
+		<%= current_user.email %>
+
+7.	El modelo original generado no incluye guardar datos como el nombre de usuario, ya que queremos agregarlo debemos modificar la tabla creada. Entonces correremos una migracion para agregar esta columna:
+
+		rails g migration AddNameToEmployee name:string
+
+		rake db:migrate
+
+8.	Ahora que nuestra tabla de empleados acepta nombre, nos queda modificar el formulario para poder ingresar el dato. Entonces iriamos a nuestro formulario de registro para agregar un nuevo input. La ruta de nuestros formularios a modificar son: app/views/devise/registrations/edit y new.
+
+		<div class="field">
+		    <%= f.label :name %><br />
+		    <%= f.text_field :name, autofocus: true %>
+	  	</div>
+
+9.	Si nos registramos de esta manera, se logra guardar en el modelo esto. PERO, no pasa el parametro del name, ya que debemos hacerlo con strong params. Existen dos maneras de pasar un strong params, se puede hacer modificando el controlador padre que es application o se puede hacer modificando el controlador del devise. Ya que el podemos manipular el controlador de devise, lo vamos a generar para poder modificarlo. Entonces haremos:
+
+		rails g devise:controllers [scope]
+
+	El SCOPE nos indica para quien se creara, en nuestro caso se creara para Employee, entonces finalmente correariamos:
+
+		rails g devise:controllers employees
+
+	Entonces tendriamos creados los controladores para los empleados como confirmation, password, registrations, session, unlock, onmniauth.
+
+10.	Editando el controlador de registro, nos damos cuenta de que hay una linea que indica, que antes de que se realice el registro o la renovacion, hagamos una accion, descomentamos lo siguiente:
+
+		# before_action :configure_sign_up_params, only: [:create]
+		# before_action :configure_account_update_params, only: [:update]
+
+	Y ademas le indicaremos al controller que vea el metodo de configurar los parametros permitidos, esto ya existe comentado en el controlador, cosa que tambien vamos a comentar y modificar:
+
+		# protected
+
+		# If you have extra params to permit, append them to the sanitizer.
+		# def configure_sign_up_params
+		#   devise_parameter_sanitizer.permit(:sign_up, keys: [:attribute])
+		# end
+
+		# If you have extra params to permit, append them to the sanitizer.
+		# def configure_account_update_params
+		#   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
+		# end
+
+	Finalmente nuestro controlador de registro para Employee que usa nuestro devise tendrá configurado:
+
+		class Employees::RegistrationsController < Devise::RegistrationsController
+		before_action :configure_sign_up_params, only: [:create]
+		before_action :configure_account_update_params, only: [:update]
+
+		  protected
+
+		  #If you have extra params to permit, append them to the sanitizer.
+		  def configure_sign_up_params
+		    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+		  end
+
+		  #If you have extra params to permit, append them to the sanitizer.
+		  def configure_account_update_params
+		    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
+		  end
+		end
+
+11.	Excelente, ya tenemos el strong params para NAME y eso quiere decir que podemos guardarlo, porque ya tenemos el controlador configurado. Si hacemos la prueba resulta que:
+
+		nfirmation"=>"[FILTERED]"}, "commit"=>"Sign up"}
+		Unpermitted parameter: name
+
+	Pam, nuevamente tenemos un parametro no permitido, ¿Que sucedió? pues no le hemos dicho a nuestras rutas que utilicen el controlador nuevo que creamos. Entonces tenemos que crearlo en las rutas, vamos a nuestro archivo de rutas y agregamos:
+
+		Rails.application.routes.draw do
+		  devise_for :employees, controllers:{
+		  	registrations: 'employees/resgistrations'
+		  }
+		  resources :songs
+		  root to: "songs#index"
+		end
+
+	Ahora si, las rutas podran buscar este controlador manipulado por nosotros y podran guardar este parametro de nombre y efectivamente cuando se crea el empleado el nombre pasa correctamente.
+
+12.	Vamos a jugar con el acceso. Vamos a permitir que cualquiera pueda ver el root es decir todas las canciones, PERO solo los usuarios registrados pueden efectivamente editarlas y crear alguna nueva. Entonces para esto hacemos uso de la propiedad :authenticate_user!, como nuestro controlador de aplicacion es el padre de todos los controladores, nos vamos a este y limitaremos el acceso desde ahi. Entonces en el application controller escribimos:
+
+	Recordemos que nuestro usuario en realidad se llama empleado.
+
+		before_action :authenticate_employee!
+
+	El problema es que esto nos filtrará el acceso a TODAS las páginas y recordemos que nosotros solamente queremos filtrar las paginas de edicion y vista de cada cancion o la creacion de las mismas. Sin embargo queremos que cualquier persona pueda ver la vista general de todas las canciones. Entonces agregamos un campo a nuestro before action indicando cual pagina no tenemos problema que vea todo el mundo.
+
+		class ApplicationController < ActionController::Base
+			before_action :authenticate_employee!, except: [:index]
+		end
+
+13.	PERFECTO, ahora cualquiera puede ver las caciones PERO no puede ver las otras paginas. Ahora vamos a suponer que solamente queremos que el administrador pueda editar las canciones creadas. Lo primero que debemos hacer es crear un campo que se llame administrador en nuestra tabla de empleados. Existe algo super útil que son los ENUMS, que nos permiten manipular de mejor manera los datos. Que nos permite unir lo mejor de los string y los numbers.
+
+	Lo primero es crear la columna rol como integer:
+
+		rails g migration AddRoleToEmployee role:integer
+		rake db:migrate
+
+	Ahora iremos a nuestro modelo de Empleado e indicaremos que estamos trabajando con enums:
+
+		enum role: [ :admin, :editor, :user]
+
+	Pero nos falta indicar que cualquier usuario que sea guardado por defecto tenga un usuario normal (user), para ello en nuestro modelo de empleados indicamos que siempre guarde al usuario asi, quedando el codigo:
+
+		class Employee < ApplicationRecord
+		  # Include default devise modules. Others available are:
+		  # :confirmable, :lockable, :timeoutable and :omniauthable
+
+		  before_save :default_role
+
+		  def default_role
+		  	self.role ||= 2
+		  end
+
+
+		  enum role: [ :admin, :editor, :user]
+
+		  devise :database_authenticatable, :registerable,
+		         :recoverable, :rememberable, :trackable, :validatable
+		end
+
+	Ahora efectivamente un usuario nuevo se registra como por defecto siendo usuario.
+
+14.	Vamos a delimitar que solo el edit y el borrar lo puede hacer un administrador. Entonces para ello vamos a nuestro controlador de canciones y decimos:
+
+		before_action :check_admin, only: [:edit, :update, :destroy]
+		def check_admin
+			authenticate_employee!
+			unless current_employee.admin?
+			  redirect_to root_path, alert: "No eres administrador, NO puedes hacer eso"
+			end
+		end
+
+	De esta manera, efectivamente el usuario que no sea administrador no puede editar, actualizar o destruir.
+
+15.	Existen cosas imporante de lo anterior, como los:
+
+		current_user
+		current_user.admin?
+		current_user.admin!
+		curret_user
+
+		<p>Tengo usuario de <%= current_employee.role if current_employee %> </p>
+		<ul class="nav navbar-nav navbar-right">
+			<% if employee_signed_in? %>
+				<li> <a href="<%= destroy_employee_session_path %>" data-method='delete'>Salir</a></li>
+				<% else %>
+				<li><a href="<%= new_employee_session_path %>"> Login </a></li>
+				<li><a href="<%= new_employee_registration_path %>"> Registro </a></li>
+			<% end %>
+		</ul>
+
+16.	Otra cosa super particular es indicar a que path te va a redirigir luego de logearte. Para ello editamos nuestro controlador de session, y colocamos lo siguiente:
+
+		def after_sign_in_path_for(resource)
+			root_path
+		end
+
+	Recordemos que tenemos que modificar nuestras rutas:
+
+		Rails.application.routes.draw do
+			devise_for :employees, controllers:{
+				registrations: 'employees/registrations',
+				sessions: 'employees/sessions'
+			}
+		end

@@ -1,0 +1,22 @@
+23-Nov-16
+#Clase FACEBOOK
+
+###Autenticación con Facebook
+
+Tiene tres partes:
+
+	-	El boton de login con facebook, y esta los redirige a facebook
+	-	Este hace login y si el login es exitoso devuelve los datos del usuario con el id de facebook
+	-	Finalmente guardamos estos datos en nuestra base de datos
+
+
+1.	Iremos a https://developers.facebook.com/
+
+2.	Nos loggeamos
+
+3.	Creamos una aplicacion en donde nos pediran el nombre de la app
+
+4.	Audience Network -> Empezar
+
+5.	Nos crea un nuevo producto
+
